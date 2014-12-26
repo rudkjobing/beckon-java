@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html ng-app="beckon">
+<head lang="en">
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("dist/css/bootstrap.min.css")" />
+  <script src="@routes.Assets.at("javascripts/angular.min.js")"></script>
+  <script src="@routes.Assets.at("angular/app.js")"></script>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body ng-app="beckon">
+  <div ng-controller="SecurityController as security">
+    <div ng-hide="security.securityContext">
+      <p>Request access</p>
+      <form ng-submit="security.requestAccessAction()">
+        <input type="email" ng-model="security.user.email" placeholder="Email" required/>
+        <input type="submit" value="Request access"/>
+      </form>
+    </div>
+    <div ng-hide="security.securityContext">
+      <p>Sign up</p>
+      <form ng-submit="security.signUpAction()" novalidate>
+        <input type="email" ng-model="security.user.email" name="email" placeholder="Email" required/>
+        <input type="text" ng-model="security.user.phoneNumber" name="phoneNumber" placeholder="Phone number"/>
+        <input type="text" ng-model="security.user.firstName" name="firstName" placeholder="First name"/>
+        <input type="text" ng-model="security.user.lastName" name="lastName" placeholder="Last name"/>
+        <input type="submit" value="Sign up"/>
+      </form>
+    </div>
+    <div ng-show="security.securityContext">
+      <p>Sign up</p>
+      <form ng-submit="security.signInAction()" novalidate>
+        <input type="text" ng-model="security.securityContext.attempt" name="pinCode" placeholder="Pin code"/>
+        <input type="submit" value="Sign in"/>
+      </form>
+    </div>
+
+    <div ng-show="security.loggedIn">
+      Welcome :-)
+    </div>
+
+  </div>
+
+
+
+
+
+</body>
+</html>
