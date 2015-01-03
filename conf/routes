@@ -5,6 +5,7 @@
 # Account routes
 POST        /account/signIn             controllers.AccountController.signIn()
 POST        /account/signUp             controllers.AccountController.signUp()
+POST        /account/check              controllers.AccountController.check()
 
 # Beckon routes
 GET         /beckons                    controllers.BeckonController.getAll()

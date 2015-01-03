@@ -5,6 +5,7 @@ import models.*;
 import play.libs.Json;
 import play.mvc.*;
 import static play.libs.Json.fromJson;
+import static play.libs.Json.toJson;
 
 /**
  * Created by steffen on 02/01/15.
@@ -30,7 +31,9 @@ public class AccountController extends Controller{
         }
 
         /* Save the users session */
-        session("connected", request.email);
+        Session s = new Session(user);
+        response().setCookie("uuid", s.getUuid(), 60 * 60 * 24 * 30);
+        s.save();
         return ok(result);
     }
 
@@ -51,7 +54,6 @@ public class AccountController extends Controller{
             newUser.save();
             result.put("success", true);
             result.put("message", "User created");
-            session("connected", newUser.getEmail());
             return ok(result);
         }
         catch(Exception e){
@@ -59,6 +61,14 @@ public class AccountController extends Controller{
             result.put("message", e.getMessage());
             return badRequest(result);
         }
+    }
+
+    @Security.Authenticated(AuthenticateUser.class)
+    public static Result check(){
+
+        User user = (User) Http.Context.current().args.get("userObject");
+
+        return ok(toJson(user));
     }
 
 }

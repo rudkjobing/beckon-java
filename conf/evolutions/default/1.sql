@@ -50,14 +50,13 @@ create table location (
   constraint pk_location primary key (id))
 ;
 
-create table security_context (
+create table session (
   id                        bigint auto_increment not null,
-  hash                      varchar(255),
-  attempt                   varchar(255),
-  autherized_user_id        bigint,
-  pin_code                  varchar(255),
-  cookie                    varchar(255),
-  constraint pk_security_context primary key (id))
+  uuid                      varchar(255),
+  user_id                   bigint,
+  expires                   datetime,
+  constraint uq_session_uuid unique (uuid),
+  constraint pk_session primary key (id))
 ;
 
 create table user (
@@ -87,8 +86,8 @@ alter table friendship add constraint fk_friendship_friend_6 foreign key (friend
 create index ix_friendship_friend_6 on friendship (friend_id);
 alter table friendship add constraint fk_friendship_peer_7 foreign key (peer_id) references friendship (id) on delete restrict on update restrict;
 create index ix_friendship_peer_7 on friendship (peer_id);
-alter table security_context add constraint fk_security_context_autherizedUser_8 foreign key (autherized_user_id) references user (id) on delete restrict on update restrict;
-create index ix_security_context_autherizedUser_8 on security_context (autherized_user_id);
+alter table session add constraint fk_session_user_8 foreign key (user_id) references user (id) on delete restrict on update restrict;
+create index ix_session_user_8 on session (user_id);
 
 
 
@@ -106,7 +105,7 @@ drop table friendship;
 
 drop table location;
 
-drop table security_context;
+drop table session;
 
 drop table user;
 
