@@ -1,5 +1,9 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import play.db.ebean.Model;
@@ -29,12 +33,16 @@ public class User extends Model {
     private String phoneNumber;
     @Column(unique=true)
     private String email;
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner",cascade=CascadeType.ALL)
+    @JsonIgnore
     public List<Friendship> friendships = new ArrayList<Friendship>();
-    @ManyToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
     public List<BeckonMembership> beckons = new ArrayList<BeckonMembership>();
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", cascade=CascadeType.ALL)
+    @JsonIgnore
     public List<Device> devices = new ArrayList<Device>();
+    @JsonIgnore
     public String hash;
 
     /**

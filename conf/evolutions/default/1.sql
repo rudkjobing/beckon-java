@@ -73,12 +73,6 @@ create table user (
   constraint pk_user primary key (id))
 ;
 
-
-create table user_beckon_membership (
-  user_id                        bigint not null,
-  beckon_membership_id           bigint not null,
-  constraint pk_user_beckon_membership primary key (user_id, beckon_membership_id))
-;
 alter table beckon add constraint fk_beckon_location_1 foreign key (location_id) references location (id) on delete restrict on update restrict;
 create index ix_beckon_location_1 on beckon (location_id);
 alter table beckon_membership add constraint fk_beckon_membership_beckon_2 foreign key (beckon_id) references beckon (id) on delete restrict on update restrict;
@@ -98,10 +92,6 @@ create index ix_security_context_autherizedUser_8 on security_context (autherize
 
 
 
-alter table user_beckon_membership add constraint fk_user_beckon_membership_user_01 foreign key (user_id) references user (id) on delete restrict on update restrict;
-
-alter table user_beckon_membership add constraint fk_user_beckon_membership_beckon_membership_02 foreign key (beckon_membership_id) references beckon_membership (id) on delete restrict on update restrict;
-
 # --- !Downs
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -119,8 +109,6 @@ drop table location;
 drop table security_context;
 
 drop table user;
-
-drop table user_beckon_membership;
 
 SET FOREIGN_KEY_CHECKS=1;
 

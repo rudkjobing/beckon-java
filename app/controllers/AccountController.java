@@ -9,7 +9,7 @@ import static play.libs.Json.fromJson;
 /**
  * Created by steffen on 02/01/15.
  */
-public class Account extends Controller{
+public class AccountController extends Controller{
 
     public static Result signIn(){
         /* Get the request body and deserialize it */

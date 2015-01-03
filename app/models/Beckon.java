@@ -1,5 +1,9 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import play.db.ebean.Model;
 
 import javax.persistence.*;
@@ -12,19 +16,20 @@ import java.util.List;
  */
 
 @Entity
-public class Beckon {
+public class Beckon extends Model{
 
     @Id
     public Long id;
     public String title;
     public String description;
-    @OneToMany
+    @OneToMany(cascade=CascadeType.ALL)
+    @JsonIgnore
     public List<BeckonMembership> members = new ArrayList<BeckonMembership>();
     @Temporal(TemporalType.TIMESTAMP)
     public Date starts;
     @Temporal(TemporalType.TIMESTAMP)
     public Date ends;
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     public Location location;
 
     public String getTitle() {
