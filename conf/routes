@@ -2,18 +2,13 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET         /                           controllers.Angular.index()
+# Account routes
+POST        /account/signIn             controllers.Account.signIn()
+POST        /account/signUp             controllers.Account.signUp()
 
-# User
-POST        /user                       controllers.Application.addPerson()
-
-GET         /people                     controllers.Application.people()
+# Beckon routes
+GET         /beckons                    controllers.Beckon.getAll()
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file               controllers.Assets.at(path="/public", file)
 
-#WEB
-#POST        /api/signUp                 controllers.Angular.signUp()
-#POST        /api/signIn                 controllers.Angular.signIn()
-#POST        /api/getSecurityContext     controllers.Angular.getSecurityContext

@@ -1,5 +1,6 @@
 package controllers;
 
+import models.Beckon;
 import models.User;
 import models.SecurityContext;
 import play.mvc.*;
@@ -13,37 +14,53 @@ import static play.libs.Json.toJson;
  */
 public class Angular extends Controller {
 
-//    public static Result signIn() {
-////        Person autherizedPerson =
-//        SecurityContext securityContext = fromJson(request().body().asJson(), SecurityContext.class);
-//
-//        SecurityContext storedSecurityContext = SecurityContext.find.where().eq("hash", securityContext.getHash()).findUnique();
-//
-//        if(securityContext.getAttempt().equals(storedSecurityContext.getPinCode())){
-//            storedSecurityContext.generateCookie();
-//            storedSecurityContext.save();
-//            response().setCookie("cookie", storedSecurityContext.getCookie(), 3600, "/");
-//            return ok(storedSecurityContext.getHash());
-//        }
-//        return badRequest();
-//    }
-//
-    public static Result index() {
-        return ok(index.render());
+    public static Result getBeckons(Long beckonId){
+
+//        Beckon b = Beckon.find.findById(beckoId);
+
+//        return ok(toJson(b));
+
+
+        return ok("hej selv, røvhul");
     }
-//
-//    public static Result getSecurityContext(){
-//
-//        String phoneNumber = request().body().asJson().get("phoneNumber").textValue();
-//        User autherizedUser = User.find.where().eq("phoneNumber", phoneNumber).findUnique();
-//        SecurityContext s = new SecurityContext();
-//        s.setAutherizedUser(autherizedUser);
-//        s.setPinCode("4942");
-//        s.save();
-//
-//        return ok(toJson(s));
-//
-//    }
+
+
+    public static Result signIn() {
+//        Person autherizedPerson =
+        SecurityContext securityContext = fromJson(request().body().asJson(), SecurityContext.class);
+
+        SecurityContext storedSecurityContext = SecurityContext.find.where().eq("hash", securityContext.getHash()).findUnique();
+
+        if(securityContext.getAttempt().equals(storedSecurityContext.getPinCode())){
+            storedSecurityContext.generateCookie();
+            storedSecurityContext.save();
+            response().setCookie("cookie", storedSecurityContext.getCookie(), 3600, "/");
+            return ok(storedSecurityContext.getHash());
+        }
+        return badRequest();
+    }
+
+    public static Result index() {
+        User u = new User();
+
+        u.setEmail("test@test.ok");
+
+        return ok(u.getEmail());
+    }
+
+    public static Result getSecurityContext(){
+
+        String phoneNumber = request().body().asJson().get("phoneNumber").textValue();
+        User autherizedUser = User.find.where().eq("phoneNumber", phoneNumber).findUnique();
+        SecurityContext s = new SecurityContext();
+        s.setAutherizedUser(autherizedUser);
+        //
+        s.setPinCode("4942");
+        s.save();
+
+        return ok(toJson(s));
+
+    }
 //
 //    public static Result signUp(){
 //

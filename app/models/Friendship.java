@@ -24,12 +24,38 @@ public class Friendship extends Model{
     public User owner;
     @ManyToOne
     public User friend;
+    @OneToOne
+    public Friendship peer;
     @Enumerated(EnumType.STRING)
     public Status status;
 
     /**
      * Getters and Setters
      */
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public Friendship getPeer() {
+        return peer;
+    }
+
+    public void setPeer(Friendship peer) {
+        this.peer = peer;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
     public User getFriend() {
         return friend;

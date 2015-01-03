@@ -1,5 +1,7 @@
 package models;
 
+import play.db.ebean.Model;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +17,7 @@ public class Beckon {
     @Id
     public Long id;
     public String title;
+    public String description;
     @OneToMany
     public List<BeckonMembership> members = new ArrayList<BeckonMembership>();
     @Temporal(TemporalType.TIMESTAMP)
@@ -55,4 +58,9 @@ public class Beckon {
     public void setEnds(Date ends) {
         this.ends = ends;
     }
+
+    public static Model.Finder<Long, Beckon> find = new Model.Finder<Long, Beckon>(
+            Long.class, Beckon.class
+    );
+
 }

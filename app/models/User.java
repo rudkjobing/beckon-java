@@ -16,10 +16,6 @@ import java.util.UUID;
 @Entity
 public class User extends Model {
 
-    public User(){
-//        this.uuid = UUID.randomUUID().toString();
-    }
-
     /**
      * Properties
      */
@@ -39,6 +35,7 @@ public class User extends Model {
     public List<BeckonMembership> beckons = new ArrayList<BeckonMembership>();
     @OneToMany(mappedBy = "owner")
     public List<Device> devices = new ArrayList<Device>();
+    public String hash;
 
     /**
      * Getters And Setters
@@ -103,6 +100,30 @@ public class User extends Model {
         this.region = region;
     }
 
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
+    public List<Device> getDevices() {
+        return devices;
+    }
+
+    public void setDevices(List<Device> devices) {
+        this.devices = devices;
+    }
+
+    public List<BeckonMembership> getBeckons() {
+        return beckons;
+    }
+
+    public void setBeckons(List<BeckonMembership> beckons) {
+        this.beckons = beckons;
+    }
+
     /**
      * Ebean
      */
@@ -111,4 +132,4 @@ public class User extends Model {
             Long.class, User.class
     );
 
-}
+ }
