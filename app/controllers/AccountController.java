@@ -1,5 +1,7 @@
 package controllers;
 
+import classes.SignInRequest;
+import classes.SignUpRequest;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.*;
 import play.libs.Json;

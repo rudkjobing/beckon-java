@@ -1,4 +1,4 @@
-package models;
+package classes;
 
 /**
  * Created by steffen on 02/01/15.
