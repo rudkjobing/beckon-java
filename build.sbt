@@ -14,4 +14,4 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "5.1.34"
 )
 
-
+javaOptions ++= Seq("-Xmx256M", "-Xmx512M", "-XX:MaxPermSize=512M")

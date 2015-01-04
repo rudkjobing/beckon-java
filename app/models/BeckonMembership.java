@@ -58,4 +58,3 @@ public class BeckonMembership extends Model{
         this.role = role;
     }
 }
-
