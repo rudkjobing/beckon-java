@@ -3,14 +3,14 @@
 # ~~~~
 
 # Account routes
-POST        /account/signIn             controllers.AccountController.signIn()
-POST        /account/signUp             controllers.AccountController.signUp()
-POST        /account/check              controllers.AccountController.check()
+POST        /account/signIn        controllers.AccountController.signIn()
+POST        /account/signUp        controllers.AccountController.signUp()
+POST        /account/check         controllers.AccountController.check()
 
 # Beckon routes
-GET         /beckons                    controllers.BeckonController.getAll()
-POST        /beckon                     controllers.BeckonController.add()
-GET         /beckons/all                controllers.BeckonController.getEverything()
+GET         /beckons               controllers.BeckonController.getAll()
+POST        /beckon                controllers.BeckonController.add()
+
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file               controllers.Assets.at(path="/public", file)
+GET         /assets/*file          controllers.Assets.at(path="/public", file)
 

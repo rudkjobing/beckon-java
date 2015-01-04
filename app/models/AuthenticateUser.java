@@ -11,6 +11,10 @@ public class AuthenticateUser extends Security.Authenticator {
 
     @Override
     public String getUsername(Http.Context ctx) {
+        if(ctx.request().cookie("uuid") == null){
+            return null;
+        }
+
         String userUUID = ctx.request().cookie("uuid").value();
         Session s = Session.find.where().eq("uuid", userUUID).findUnique();
         if(s != null){
@@ -23,7 +27,7 @@ public class AuthenticateUser extends Security.Authenticator {
 
     @Override
     public Result onUnauthorized(Http.Context ctx) {
-        return unauthorized(ctx.request().cookie("uuid").value());
+        return unauthorized();
     }
 
 }

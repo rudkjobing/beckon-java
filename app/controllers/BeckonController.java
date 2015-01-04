@@ -18,20 +18,9 @@ import static play.libs.Json.toJson;
 public class BeckonController extends Controller{
 
     @Security.Authenticated(AuthenticateUser.class)
-    public static Result getEverything(){
-        User u = User.find.where().eq("email", "slyngel@gmail.com").findUnique();
-
-        return ok(toJson(u.getBeckons()));
-    }
-
-    @Security.Authenticated(AuthenticateUser.class)
     public static Result getAll(){
 
-        String email = session("connected");
-        if(email == null){
-            return forbidden();
-        }
-        User user = User.find.where().eq("email", email).findUnique();
+        User user = (User) Http.Context.current().args.get("userObject");
 
         return ok(toJson(user.getBeckons()));
 
