@@ -1,5 +1,6 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.*;
 import play.libs.Json;
@@ -10,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static play.libs.Json.fromJson;
 import static play.libs.Json.toJson;
 
 /**
@@ -21,13 +23,17 @@ public class BeckonController extends Controller{
     public static Result getAll(){
 
         User user = (User) Http.Context.current().args.get("userObject");
-
         return ok(toJson(user.getBeckons()));
 
     }
 
     @Security.Authenticated(AuthenticateUser.class)
     public static Result add(){
+
+//        JsonNode root = request().body().asJson();
+//
+//        Beckon newBeckon = fromJson(root.get("beckon"), Beckon.class);
+//
 
         Beckon b = new Beckon();
         DateFormat format = new SimpleDateFormat("y/m/d H:m:s", Locale.ENGLISH);

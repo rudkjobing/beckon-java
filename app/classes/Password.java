@@ -1,4 +1,4 @@
-package models;
+package classes;
 
 import org.apache.commons.codec.binary.Base64;
 

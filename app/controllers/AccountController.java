@@ -1,5 +1,6 @@
 package controllers;
 
+import classes.Password;
 import classes.SignInRequest;
 import classes.SignUpRequest;
 import com.fasterxml.jackson.databind.node.ObjectNode;

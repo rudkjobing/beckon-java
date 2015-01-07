@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import play.db.ebean.Model;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Entity
 public class Friendship extends Model{
 
-    public enum Status {INVITED, ACCEPTED, DECLINED, BLOCKED, DELETED};
+    public enum Status {PENDING, INVITED, ACCEPTED, DECLINED, BLOCKED, DELETED};
 
     /**
      * Properties
@@ -21,10 +22,12 @@ public class Friendship extends Model{
     public Long id;
     public String nickname;
     @ManyToOne
+    @JsonIgnore
     public User owner;
     @ManyToOne
     public User friend;
     @OneToOne
+    @JsonIgnore
     public Friendship peer;
     @Enumerated(EnumType.STRING)
     public Status status;
