@@ -38,7 +38,7 @@ create table friendship (
   friend_id                 bigint,
   peer_id                   bigint,
   status                    varchar(8),
-  constraint ck_friendship_status check (status in ('INVITED','ACCEPTED','DECLINED','BLOCKED','DELETED')),
+  constraint ck_friendship_status check (status in ('PENDING','INVITED','ACCEPTED','DECLINED','BLOCKED','DELETED')),
   constraint pk_friendship primary key (id))
 ;
 
