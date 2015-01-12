@@ -52,6 +52,7 @@ public class AccountController extends Controller{
             newUser.setEmail(request.email);
             newUser.setPhoneNumber(request.phoneNumber);
             newUser.setFirstName(request.firstName);
+            newUser.setLastName(request.lastName);
             newUser.setHash(Password.getSaltedHash(request.password));
 
             newUser.save();

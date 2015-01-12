@@ -16,6 +16,9 @@ POST        /users/search          controllers.UserController.search()
 
 # Friendship routes
 GET         /friendships           controllers.FriendshipController.getAll()
+POST        /friend                controllers.FriendshipController.add()
+POST        /friend/accept         controllers.FriendshipController.accept()
+POST        /friend/decline        controllers.FriendshipController.decline()
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file          controllers.Assets.at(path="/public", file)

@@ -8,6 +8,7 @@ public class SignUpRequest {
     public String email;
     public String phoneNumber;
     public String firstName;
+    public String lastName;
     public String password;
     public String region;
 
@@ -33,6 +34,14 @@ public class SignUpRequest {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPassword() {

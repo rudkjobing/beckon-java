@@ -1,6 +1,7 @@
 package controllers;
 
 import classes.AddFriendshipRequest;
+import classes.FriendshipTransition;
 import com.avaje.ebean.Expr;
 import models.AuthenticateUser;
 import models.Friendship;
@@ -28,6 +29,10 @@ public class FriendshipController extends Controller {
         User me = (User) Http.Context.current().args.get("userObject");
         User them = User.find.byId(r.getUserId());
 
+        if(me.getId().equals(them.getId())){
+            return badRequest("You cannot be friends with yourself.");
+        }
+
         Friendship myFriendship = new Friendship();
         Friendship theirFriendship = new Friendship();
 
@@ -40,6 +45,9 @@ public class FriendshipController extends Controller {
         theirFriendship.setNickname(me.getFirstName());
         theirFriendship.setOwner(them);
         theirFriendship.setStatus(Friendship.Status.INVITED);
+
+        myFriendship.save();
+        theirFriendship.save();
 
         myFriendship.setPeer(theirFriendship);
         theirFriendship.setPeer(myFriendship);
@@ -55,7 +63,16 @@ public class FriendshipController extends Controller {
 
         User user = (User) Http.Context.current().args.get("userObject");
 
-        List<Friendship> friends = Friendship.find.where().and(Expr.eq("owner", user), Expr.eq("status", Friendship.Status.ACCEPTED)).findList();
+        List<Friendship> friends = Friendship.find.where()
+                .and(
+                        Expr.eq("owner", user),
+                        Expr.or(
+                                Expr.or(
+                                        Expr.eq("status", Friendship.Status.INVITED), Expr.eq("status", Friendship.Status.ACCEPTED)
+                                ),
+                                Expr.eq("status", Friendship.Status.PENDING)
+                        )
+                ).findList();
 
         return ok(toJson(friends));
 
@@ -65,6 +82,31 @@ public class FriendshipController extends Controller {
     public static Result delete(){
 
         User user = (User) Http.Context.current().args.get("userObject");
+        return ok();
+    }
+
+    @Security.Authenticated(AuthenticateUser.class)
+    public static Result accept(){
+        User user = (User) Http.Context.current().args.get("userObject");
+        FriendshipTransition ft = fromJson(request().body().asJson(), FriendshipTransition.class);
+        Friendship f = Friendship.find.byId(ft.id);
+        Friendship peer = f.getPeer();
+        f.setStatus(Friendship.Status.ACCEPTED);
+        peer.setStatus(Friendship.Status.ACCEPTED);
+        f.save();
+        peer.save();
+        return ok();
+    }
+
+    public static Result decline(){
+        User user = (User) Http.Context.current().args.get("userObject");
+        FriendshipTransition ft = fromJson(request().body().asJson(), FriendshipTransition.class);
+        Friendship f = Friendship.find.byId(ft.id);
+        Friendship peer = f.getPeer();
+        f.setStatus(Friendship.Status.DECLINED);
+        peer.setStatus(Friendship.Status.BLOCKED);
+        f.save();
+        peer.save();
         return ok();
     }
 
