@@ -1,6 +1,7 @@
 package controllers;
 
 import classes.AddFriendshipRequest;
+import classes.UpdateFriendshipRequest;
 import classes.FriendshipTransition;
 import com.avaje.ebean.Expr;
 import models.AuthenticateUser;
@@ -54,6 +55,18 @@ public class FriendshipController extends Controller {
 
         myFriendship.save();
         theirFriendship.save();
+
+        return ok();
+    }
+
+    @Security.Authenticated(AuthenticateUser.class)
+    public static Result update(){
+        User user = (User) Http.Context.current().args.get("userObject");
+        UpdateFriendshipRequest r = fromJson(request().body().asJson(), UpdateFriendshipRequest.class);
+        Friendship f = Friendship.find.byId(r.getFriendId());
+
+        f.setNickname(r.getNickname());
+        f.save();
 
         return ok();
     }

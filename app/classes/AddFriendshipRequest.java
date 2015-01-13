@@ -1,10 +1,7 @@
 package classes;
 
-import models.User;
-
-
 /**
- * Created by Steffen Rudkjøbing on 07/01/15.
+ * Created by Steffen Rudkjøbing on 12/01/15.
  * © 2014 Steffen Rudkjøbing
  */
 public class AddFriendshipRequest {

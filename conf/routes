@@ -16,7 +16,8 @@ POST        /users/search          controllers.UserController.search()
 
 # Friendship routes
 GET         /friendships           controllers.FriendshipController.getAll()
-POST        /friend                controllers.FriendshipController.add()
+PUT         /friend                controllers.FriendshipController.add()
+POST        /friend                controllers.FriendshipController.update()
 POST        /friend/accept         controllers.FriendshipController.accept()
 POST        /friend/decline        controllers.FriendshipController.decline()
 
