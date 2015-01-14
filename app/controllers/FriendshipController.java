@@ -40,12 +40,12 @@ public class FriendshipController extends Controller {
         myFriendship.setFriend(them);
         myFriendship.setNickname(r.getNickname());
         myFriendship.setOwner(me);
-        myFriendship.setStatus(Friendship.Status.PENDING);
+        myFriendship.setStatus(Friendship.Status.INVITED);
 
         theirFriendship.setFriend(me);
         theirFriendship.setNickname(me.getFirstName());
         theirFriendship.setOwner(them);
-        theirFriendship.setStatus(Friendship.Status.INVITED);
+        theirFriendship.setStatus(Friendship.Status.PENDING);
 
         myFriendship.save();
         theirFriendship.save();
@@ -72,20 +72,27 @@ public class FriendshipController extends Controller {
     }
 
     @Security.Authenticated(AuthenticateUser.class)
-    public static Result getAll(){
+    public static Result getAll(Long id){
 
         User user = (User) Http.Context.current().args.get("userObject");
 
         List<Friendship> friends = Friendship.find.where()
                 .and(
-                        Expr.eq("owner", user),
+                        Expr.and(
+                                Expr.eq("owner", user),
+                                Expr.gt("id", id))
+                        ,
                         Expr.or(
                                 Expr.or(
                                         Expr.eq("status", Friendship.Status.INVITED), Expr.eq("status", Friendship.Status.ACCEPTED)
                                 ),
                                 Expr.eq("status", Friendship.Status.PENDING)
                         )
-                ).findList();
+                ).orderBy("nickname").findList();
+
+        if(friends.size() == 0){
+            return status(304, "Not modified");
+        }
 
         return ok(toJson(friends));
 
