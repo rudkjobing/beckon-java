@@ -23,24 +23,24 @@ public class User extends Model {
 
     @Id
     public Long id;
-    public String firstName;
-    public String lastName;
-    public String region = "DK";
+    private String firstName;
+    private String lastName;
+    private String region = "DK";
     @Column(unique=true)
     private String phoneNumber;
     @Column(unique=true)
     private String email;
     @OneToMany(mappedBy = "owner",cascade=CascadeType.ALL)
     @JsonIgnore
-    public List<Friendship> friendships = new ArrayList<Friendship>();
+    private List<Friendship> friendships = new ArrayList<Friendship>();
     @OneToMany(cascade = CascadeType.ALL)
     @JsonIgnore
-    public List<BeckonMembership> beckons = new ArrayList<BeckonMembership>();
+    private List<BeckonMembership> beckons = new ArrayList<BeckonMembership>();
     @OneToMany(mappedBy = "owner", cascade=CascadeType.ALL)
     @JsonIgnore
-    public List<Device> devices = new ArrayList<Device>();
+    private List<Device> devices = new ArrayList<Device>();
     @JsonIgnore
-    public String hash;
+    private String hash;
 
     /**
      * Getters And Setters

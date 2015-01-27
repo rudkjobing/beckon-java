@@ -72,25 +72,39 @@ public class FriendshipController extends Controller {
     }
 
     @Security.Authenticated(AuthenticateUser.class)
-    public static Result getAll(Long id){
+    public static Result getList(Long id, String status){
 
         User user = (User) Http.Context.current().args.get("userObject");
+        List<Friendship> friends;
+        if(status == null){
+            friends = Friendship.find.where()
+                    .and(
+                            Expr.and(
+                                    Expr.eq("owner", user),
+                                    Expr.gt("id", id))
+                            ,
+                            Expr.or(
+                                    Expr.or(
+                                            Expr.eq("status", Friendship.Status.INVITED), Expr.eq("status", Friendship.Status.ACCEPTED)
+                                    ),
+                                    Expr.eq("status", Friendship.Status.PENDING)
+                            )
+                    ).orderBy("nickname").findList();
+        }
+        else{
+            friends = Friendship.find.where()
+                    .and(
+                            Expr.and(
+                                    Expr.eq("owner", user),
+                                    Expr.gt("id", id)
+                            )
+                            ,
+                            Expr.eq("status", Friendship.Status.ACCEPTED)
+                    ).orderBy("nickname").findList();
+        }
 
-        List<Friendship> friends = Friendship.find.where()
-                .and(
-                        Expr.and(
-                                Expr.eq("owner", user),
-                                Expr.gt("id", id))
-                        ,
-                        Expr.or(
-                                Expr.or(
-                                        Expr.eq("status", Friendship.Status.INVITED), Expr.eq("status", Friendship.Status.ACCEPTED)
-                                ),
-                                Expr.eq("status", Friendship.Status.PENDING)
-                        )
-                ).orderBy("nickname").findList();
 
-        if(friends.size() == 0){
+        if(friends.size() == 0 && id != 0L){
             return status(304, "Not modified");
         }
 

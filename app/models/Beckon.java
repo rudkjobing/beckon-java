@@ -29,8 +29,10 @@ public class Beckon extends Model{
     public Date starts;
     @Temporal(TemporalType.TIMESTAMP)
     public Date ends;
-    @ManyToOne(cascade=CascadeType.ALL)
+    @OneToOne(cascade=CascadeType.ALL)
     public Location location;
+    @OneToOne(cascade=CascadeType.ALL, mappedBy="beckon")
+    public BeckonDatePoll datePoll;
 
     public String getTitle() {
         return title;

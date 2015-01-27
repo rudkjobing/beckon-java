@@ -15,7 +15,7 @@ POST        /beckon                controllers.BeckonController.add()
 POST        /users/search          controllers.UserController.search()
 
 # Friendship routes
-GET         /friendships          controllers.FriendshipController.getAll(id: Long)
+GET         /friendships           controllers.FriendshipController.getList(id: Long, status ?= null)
 PUT         /friend                controllers.FriendshipController.add()
 POST        /friend                controllers.FriendshipController.update()
 POST        /friend/accept         controllers.FriendshipController.accept()
