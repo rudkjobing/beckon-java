@@ -9,15 +9,15 @@ import models.User;
  */
 public class UpdateFriendshipRequest {
 
-    public Long friendId;
+    public Long id;
     public String nickname;
 
     public Long getFriendId() {
-        return friendId;
+        return id;
     }
 
     public void setFriendId(Long friendId) {
-        this.friendId = friendId;
+        this.id = friendId;
     }
 
     public String getNickname() {

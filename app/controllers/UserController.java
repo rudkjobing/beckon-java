@@ -2,7 +2,7 @@ package controllers;
 
 import classes.SearchQuery;
 import com.avaje.ebean.Expr;
-import models.AuthenticateUser;
+import support.security.AuthenticateUser;
 import models.User;
 import play.mvc.Controller;
 import play.mvc.Http;

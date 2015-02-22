@@ -1,10 +1,13 @@
 package controllers;
 
 import classes.AddFriendshipRequest;
-import classes.UpdateFriendshipRequest;
 import classes.FriendshipTransition;
+import classes.UpdateFriendshipRequest;
+import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.sns.AmazonSNSClient;
 import com.avaje.ebean.Expr;
-import models.AuthenticateUser;
+import support.security.AuthenticateUser;
 import models.Friendship;
 import models.User;
 import play.mvc.Controller;
@@ -55,6 +58,9 @@ public class FriendshipController extends Controller {
 
         myFriendship.save();
         theirFriendship.save();
+
+        AmazonSNSClient sns = new AmazonSNSClient(new ClasspathPropertiesFileCredentialsProvider());
+        sns.setRegion(Regions.EU_CENTRAL_1);
 
         return ok();
     }

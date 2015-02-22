@@ -1,5 +1,7 @@
-package models;
+package support.security;
 
+import models.Session;
+import models.User;
 import play.libs.F;
 import play.mvc.*;
 

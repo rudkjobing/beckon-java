@@ -26,13 +26,9 @@ public class Beckon extends Model{
     @JsonIgnore
     public List<BeckonMembership> members = new ArrayList<BeckonMembership>();
     @Temporal(TemporalType.TIMESTAMP)
-    public Date starts;
-    @Temporal(TemporalType.TIMESTAMP)
-    public Date ends;
+    public Date begins;
     @OneToOne(cascade=CascadeType.ALL)
     public Location location;
-    @OneToOne(cascade=CascadeType.ALL, mappedBy="beckon")
-    public BeckonDatePoll datePoll;
 
     public String getTitle() {
         return title;
@@ -50,24 +46,11 @@ public class Beckon extends Model{
         this.members = members;
     }
 
-    public Date getStarts() {
-        return starts;
+    public Date getBegins() {
+        return begins;
     }
 
-    public void setStarts(Date starts) {
-        this.starts = starts;
+    public void setBegins(Date begins) {
+        this.begins = begins;
     }
-
-    public Date getEnds() {
-        return ends;
-    }
-
-    public void setEnds(Date ends) {
-        this.ends = ends;
-    }
-
-    public static Model.Finder<Long, Beckon> find = new Model.Finder<Long, Beckon>(
-            Long.class, Beckon.class
-    );
-
 }

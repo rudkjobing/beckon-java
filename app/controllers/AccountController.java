@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.*;
 import play.libs.Json;
 import play.mvc.*;
+import support.security.AuthenticateUser;
+
 import static play.libs.Json.fromJson;
 import static play.libs.Json.toJson;
 
