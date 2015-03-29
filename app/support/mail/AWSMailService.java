@@ -17,7 +17,7 @@ import play.Logger;
  */
 public class AWSMailService implements MailService {
 
-    AmazonSimpleEmailService service;
+    AmazonSimpleEmailServiceClient service;
 
     public AWSMailService(){
         Config c = ConfigFactory.load();

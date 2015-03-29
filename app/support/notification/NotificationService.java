@@ -5,4 +5,5 @@ package support.notification;
  * © 2014 Steffen Rudkjøbing
  */
 public interface NotificationService {
+
 }

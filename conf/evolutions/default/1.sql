@@ -27,6 +27,8 @@ create table device (
   id                        bigint auto_increment not null,
   arn                       varchar(255),
   owner_id                  bigint,
+  type                      varchar(7),
+  constraint ck_device_type check (type in ('APPLE','ANDROID','WINDOWS')),
   constraint pk_device primary key (id))
 ;
 

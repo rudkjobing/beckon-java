@@ -70,6 +70,14 @@ public class AccountController extends Controller{
     }
 
     @Security.Authenticated(AuthenticateUser.class)
+    public static Result registerDevice(){
+
+        User user = (User) Http.Context.current().args.get("userObject");
+
+        return ok(toJson(user));
+    }
+
+    @Security.Authenticated(AuthenticateUser.class)
     public static Result check(){
 
         User user = (User) Http.Context.current().args.get("userObject");
