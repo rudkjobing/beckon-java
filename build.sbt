@@ -12,8 +12,7 @@ libraryDependencies ++= Seq(
   cache,
   javaWs,
   "mysql" % "mysql-connector-java" % "5.1.34",
-  "com.amazonaws" % "aws-java-sdk" % "1.9.17",
-  "commons-codec" % "commons-codec" % "1.9"
+  "com.amazonaws" % "aws-java-sdk" % "1.9.17"
 )
 
 javaOptions ++= Seq("-Xmx256M", "-Xmx512M", "-XX:MaxPermSize=512M")

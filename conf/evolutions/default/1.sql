@@ -28,6 +28,8 @@ create table device (
   arn                       varchar(255),
   owner_id                  bigint,
   type                      varchar(7),
+  first_registered          datetime,
+  last_registered           datetime,
   constraint ck_device_type check (type in ('APPLE','ANDROID','WINDOWS')),
   constraint pk_device primary key (id))
 ;
