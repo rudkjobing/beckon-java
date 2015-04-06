@@ -1,14 +1,18 @@
 package controllers;
 
+import com.amazonaws.services.sns.model.CreatePlatformEndpointResult;
 import play.libs.F;
 import play.mvc.Controller;
 import play.mvc.Result;
 import support.mail.AWSMail;
 import support.mail.AWSMailService;
 import support.mail.Mail;
+import support.notification.AWSNotificationService;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
+
+import static play.libs.Json.toJson;
 
 /**
  * Created by Steffen Rudkjøbing on 22/02/15.
@@ -45,6 +49,28 @@ public class TestController extends Controller {
                     }
                 }
         );
+    }
+
+    public static Result notification(){
+        AWSNotificationService s = new AWSNotificationService();
+        try{
+            s.sendNotification();
+        }
+        catch(Exception e){
+            return ok(e.getMessage());
+        }
+        return ok("notification sent... aight < (>.<) > ");
+    }
+
+    public static Result createEndpoint(){
+        AWSNotificationService s = new AWSNotificationService();
+        try{
+            CreatePlatformEndpointResult r = s.createEndpoint("013adbda7aea59b7fe47f067838e6b1421f3badc3c4ad34b61dbb03a60b779e4");
+            return ok(toJson(r));
+        }
+        catch(Exception e){
+            return ok(e.getMessage());
+        }
     }
 
 }

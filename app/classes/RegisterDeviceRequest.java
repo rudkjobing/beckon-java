@@ -8,7 +8,7 @@ import models.Device;
  */
 public class RegisterDeviceRequest {
 
-    public String uid;
+    public String uuid;
     public Device.Type type;
 
 }

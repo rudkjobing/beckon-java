@@ -1,5 +1,7 @@
 package models;
 
+import play.db.ebean.Model;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -8,21 +10,23 @@ import java.util.Date;
  */
 
 @Entity
-public class Device {
+public class Device extends Model{
 
     public enum Type {APPLE, ANDROID, WINDOWS};
 
     @Id
-    public Long id;
-    public String arn;
+    private Long id;
+    private String arn;
+    private String uuid;
+
     @ManyToOne
-    public User owner;
+    private User owner;
     @Enumerated(EnumType.STRING)
-    public Type type;
+    private Type type;
     @Temporal(TemporalType.TIMESTAMP)
-    public Date firstRegistered;
+    private Date firstRegistered;
     @Temporal(TemporalType.TIMESTAMP)
-    public Date lastRegistered;
+    private Date lastRegistered;
 
     public Long getId() {
         return id;
@@ -34,6 +38,14 @@ public class Device {
 
     public void setArn(String arn) {
         this.arn = arn;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public User getOwner() {
@@ -67,4 +79,8 @@ public class Device {
     public void setLastRegistered(Date lastRegistered) {
         this.lastRegistered = lastRegistered;
     }
+
+    public static Model.Finder<Long,Device> find = new Model.Finder<Long,Device>(
+            Long.class, Device.class
+    );
 }

@@ -5,6 +5,7 @@
 # Account routes
 POST        /account/signIn        controllers.AccountController.signIn()
 POST        /account/signUp        controllers.AccountController.signUp()
+POST        /account/device/register         controllers.AccountController.registerDevice()
 POST        /account/check         controllers.AccountController.check()
 
 # Beckon routes
@@ -23,6 +24,9 @@ POST        /friend/decline        controllers.FriendshipController.decline()
 
 # Test
 GET         /test/mail              controllers.TestController.mail()
+GET         /test/notification      controllers.TestController.notification()
+GET         /test/createEndpoint      controllers.TestController.createEndpoint()
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file          controllers.Assets.at(path="/public", file)

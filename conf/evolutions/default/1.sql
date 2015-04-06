@@ -26,6 +26,7 @@ create table beckon_membership (
 create table device (
   id                        bigint auto_increment not null,
   arn                       varchar(255),
+  uuid                      varchar(255),
   owner_id                  bigint,
   type                      varchar(7),
   first_registered          datetime,

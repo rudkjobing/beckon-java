@@ -1,13 +1,19 @@
 package controllers;
 
 import classes.Password;
+import classes.RegisterDeviceRequest;
 import classes.SignInRequest;
 import classes.SignUpRequest;
+import com.amazonaws.services.sns.model.CreatePlatformEndpointResult;
+import com.avaje.ebean.Expr;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.*;
 import play.libs.Json;
 import play.mvc.*;
+import support.notification.AWSNotificationService;
 import support.security.AuthenticateUser;
+
+import java.util.Date;
 
 import static play.libs.Json.fromJson;
 import static play.libs.Json.toJson;
@@ -72,9 +78,41 @@ public class AccountController extends Controller{
     @Security.Authenticated(AuthenticateUser.class)
     public static Result registerDevice(){
 
+        RegisterDeviceRequest request = fromJson(request().body().asJson(), RegisterDeviceRequest.class);
         User user = (User) Http.Context.current().args.get("userObject");
 
-        return ok(toJson(user));
+        Device device = Device.find.where()
+                .and(
+                        Expr.and(
+                                Expr.eq("uuid", request.uuid),
+                                Expr.eq("type", request.type)
+                        ),
+                        Expr.eq("owner", user)
+                ).findUnique();
+
+        if(device == null){
+            device = new Device();
+            device.setOwner(user);
+            device.setType(request.type);
+            device.setUuid(request.uuid);
+            device.setFirstRegistered(new Date());
+            device.setLastRegistered(new Date());
+
+            AWSNotificationService service = new AWSNotificationService();
+            CreatePlatformEndpointResult arn = service.createEndpoint(device.getUuid());
+
+            device.setArn(arn.getEndpointArn());
+            device.save();
+
+            return ok(toJson(device));
+        }
+        else{
+            device.setLastRegistered(new Date());
+            device.save();
+        }
+
+        return ok(toJson(device));
+
     }
 
     @Security.Authenticated(AuthenticateUser.class)
