@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Entity
 public class BeckonMembership extends Model{
 
-    public enum Status {INVITED, ACCEPTED, DECLINED};
+    public enum Status {INVITED, ACCEPTED, MAYBE, DECLINED};
     public enum Role {CREATOR, MEMBER, ADMIN}
 
     @Id

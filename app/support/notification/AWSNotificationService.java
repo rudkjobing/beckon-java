@@ -13,6 +13,9 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import models.Device;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Steffen Rudkjøbing on 22/02/15.
  * © 2014 Steffen Rudkjøbing
@@ -21,6 +24,8 @@ public class AWSNotificationService implements NotificationService{
 
     AmazonSNSClient service;
     String arn;
+    String message;
+    List<Device> endpoints;
 
     public AWSNotificationService(){
 
@@ -38,12 +43,25 @@ public class AWSNotificationService implements NotificationService{
 
     public void sendNotification(){
 
-        PublishRequest p = new PublishRequest();
-        p.setTargetArn("arn:aws:sns:us-east-1:477853814738:endpoint/APNS_SANDBOX/Beckon/31dfaa22-69b3-3701-b510-c31ac29c4105");
-        p.setMessage("Den er der til den er væk : Augustus Caesar");
+        if(this.message == null || this.endpoints == null){
+            return;
+        }
 
-        this.service.publish(p);
+        for(Device d : this.endpoints){
+            PublishRequest p = new PublishRequest();
+            p.setTargetArn(d.getArn());
+            p.setMessage(this.message);
+            this.service.publish(p);
+        }
 
+    }
+
+    public void setMessage(String message){
+        this.message = message;
+    }
+
+    public void setEndpoints(List<Device> devices){
+        this.endpoints = devices;
     }
 
     public CreatePlatformEndpointResult createEndpoint(String uuid){

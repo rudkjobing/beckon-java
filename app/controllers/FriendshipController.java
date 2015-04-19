@@ -7,6 +7,9 @@ import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.avaje.ebean.Expr;
+import net.sf.ehcache.search.expression.Not;
+import support.notification.AWSNotificationService;
+import support.notification.NotificationService;
 import support.security.AuthenticateUser;
 import models.Friendship;
 import models.User;
@@ -59,8 +62,11 @@ public class FriendshipController extends Controller {
         myFriendship.save();
         theirFriendship.save();
 
-        AmazonSNSClient sns = new AmazonSNSClient(new ClasspathPropertiesFileCredentialsProvider());
-        sns.setRegion(Regions.EU_CENTRAL_1);
+        AWSNotificationService service = new AWSNotificationService();
+
+        service.setEndpoints(them.getDevices());
+        service.setMessage(me.getFirstName() + " " + me.getLastName() + " wants to be friends with you!");
+        service.sendNotification();
 
         return ok();
     }
@@ -135,6 +141,13 @@ public class FriendshipController extends Controller {
         peer.setStatus(Friendship.Status.ACCEPTED);
         f.save();
         peer.save();
+
+        AWSNotificationService service = new AWSNotificationService();
+
+        service.setEndpoints(peer.getOwner().getDevices());
+        service.setMessage(user.getFirstName() + " " + user.getLastName() + " has accepted your friend request!");
+        service.sendNotification();
+
         return ok();
     }
 

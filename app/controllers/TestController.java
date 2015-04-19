@@ -1,6 +1,8 @@
 package controllers;
 
+import classes.AddBeckonRequest;
 import com.amazonaws.services.sns.model.CreatePlatformEndpointResult;
+import models.Location;
 import play.libs.F;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -10,6 +12,7 @@ import support.mail.Mail;
 import support.notification.AWSNotificationService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.Callable;
 
 import static play.libs.Json.toJson;

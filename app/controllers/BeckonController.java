@@ -1,13 +1,22 @@
 package controllers;
 
+import classes.AddBeckonRequest;
+import classes.BeckonResult;
+import com.avaje.ebean.annotation.Transactional;
 import models.*;
+import play.Logger;
 import play.mvc.*;
+import support.notification.AWSNotificationService;
 import support.security.AuthenticateUser;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
+import static play.libs.Json.fromJson;
 import static play.libs.Json.toJson;
 
 /**
@@ -19,45 +28,73 @@ public class BeckonController extends Controller{
     public static Result getAll(){
 
         User user = (User) Http.Context.current().args.get("userObject");
-        return ok(toJson(user.getBeckons()));
+        BeckonResult b = new BeckonResult();
+
+        List<BeckonMembership> beckons = user.getBeckons();
+
+        for(BeckonMembership m : beckons){
+            b.addBeckon(m);
+        }
+        return ok(toJson(b));
 
     }
 
+    @Transactional
     @Security.Authenticated(AuthenticateUser.class)
     public static Result add(){
 
-//        JsonNode root = request().body().asJson();
-//
-//        Beckon newBeckon = fromJson(root.get("beckon"), Beckon.class);
-//
+        AddBeckonRequest a = fromJson(request().body().asJson(), AddBeckonRequest.class);
+        User user = (User) Http.Context.current().args.get("userObject");
 
         Beckon b = new Beckon();
-        DateFormat format = new SimpleDateFormat("y/m/d H:m:s", Locale.ENGLISH);
-        try{
-            b.setTitle("Første beckon i verden");
-            b.setBegins(format.parse("2015/8/24 23:43:10"));
 
-            User u = User.find.where().eq("email", "slyngel@gmail.com").findUnique();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
-            BeckonMembership m = new BeckonMembership();
-            m.setUser(u);
-            m.setStatus(BeckonMembership.Status.ACCEPTED);
-            m.setRole(BeckonMembership.Role.ADMIN);
-            b.getMembers().add(m);
+        try {
+
+            Date date = formatter.parse(a.begins);
+            b.setBegins(date);
+
+        } catch (Exception e) {
+            return internalServerError();
+        }
+
+        b.setTitle(a.title);
+        b.setLocation(a.location);
+
+        BeckonMembership m = new BeckonMembership();
+        m.setUser(user);
+        m.setBeckon(b);
+        b.getMembers().add(m);
+        m.setRole(BeckonMembership.Role.CREATOR);
+        m.setStatus(BeckonMembership.Status.ACCEPTED);
+        user.getBeckons().add(m);
+        m.save();
+
+        for(Friendship f : a.members) {
+            f.refresh();
+            Logger.debug(f.getNickname());
+            Logger.debug(f.getFriend().getEmail());
+            m = new BeckonMembership();
+            m.setUser(f.getFriend());
             m.setBeckon(b);
+            b.getMembers().add(m);
+            m.setRole(BeckonMembership.Role.MEMBER);
+            m.setStatus(BeckonMembership.Status.INVITED);
+            f.getOwner().getBeckons().add(m);
+            m.save();
 
-            u.getBeckons().add(m);
-//
-//            m.save();
-            b.save();
-//            u.save();
+            AWSNotificationService service = new AWSNotificationService();
 
-            return ok();
+            service.setEndpoints(f.getFriend().getDevices());
+            service.setMessage(user.getFirstName() + " " + user.getLastName() + " has invited you to " + b.getTitle());
+            service.sendNotification();
         }
-        catch(Exception e){
 
-        }
+        b.save();
+
         return ok();
+
     }
 
 }

@@ -18,7 +18,7 @@ create table beckon_membership (
   user_id                   bigint,
   status                    varchar(8),
   role                      varchar(7),
-  constraint ck_beckon_membership_status check (status in ('INVITED','ACCEPTED','DECLINED')),
+  constraint ck_beckon_membership_status check (status in ('INVITED','ACCEPTED','MAYBE','DECLINED')),
   constraint ck_beckon_membership_role check (role in ('CREATOR','MEMBER','ADMIN')),
   constraint pk_beckon_membership primary key (id))
 ;

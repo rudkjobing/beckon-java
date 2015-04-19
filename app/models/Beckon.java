@@ -27,8 +27,16 @@ public class Beckon extends Model{
     public List<BeckonMembership> members = new ArrayList<BeckonMembership>();
     @Temporal(TemporalType.TIMESTAMP)
     public Date begins;
-    @OneToOne(cascade=CascadeType.ALL)
+    @OneToOne(cascade=CascadeType.ALL,fetch = FetchType.EAGER)
     public Location location;
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 
     public String getTitle() {
         return title;
