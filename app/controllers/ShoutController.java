@@ -1,7 +1,8 @@
 package controllers;
 
-import classes.AddBeckonRequest;
-import classes.BeckonResult;
+import classes.ShoutAddRequest;
+import classes.ShoutList;
+import classes.ShoutMemberTransition;
 import com.avaje.ebean.annotation.Transactional;
 import models.*;
 import play.Logger;
@@ -9,12 +10,9 @@ import play.mvc.*;
 import support.notification.AWSNotificationService;
 import support.security.AuthenticateUser;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import static play.libs.Json.fromJson;
 import static play.libs.Json.toJson;
@@ -22,20 +20,38 @@ import static play.libs.Json.toJson;
 /**
  * Created by steffen on 03/01/15.
  */
-public class BeckonController extends Controller{
+public class ShoutController extends Controller{
+
+    @Security.Authenticated(AuthenticateUser.class)
+    public static Result updateMemberStatus(){
+
+        User user = (User) Http.Context.current().args.get("userObject");
+
+        ShoutMemberTransition transition = fromJson(request().body().asJson(), ShoutMemberTransition.class);
+
+        ShoutMembership member = ShoutMembership.find.byId(transition.shoutMemberId);
+        if(member.getUser() == user){
+            member.setStatus(transition.status);
+            member.save();
+            return ok(toJson(member));
+        }
+
+        return badRequest();
+
+    }
 
     @Security.Authenticated(AuthenticateUser.class)
     public static Result getAll(){
 
         User user = (User) Http.Context.current().args.get("userObject");
-        BeckonResult b = new BeckonResult();
+        ShoutList b = new ShoutList();
 
-        List<BeckonMembership> beckons = user.getBeckons();
+        List<ShoutMembership> beckons = user.getBeckons();
 
-        for(BeckonMembership m : beckons){
+        for(ShoutMembership m : beckons){
             b.addBeckon(m);
         }
-        return ok(toJson(b));
+        return ok(toJson(b.beckons));
 
     }
 
@@ -43,10 +59,10 @@ public class BeckonController extends Controller{
     @Security.Authenticated(AuthenticateUser.class)
     public static Result add(){
 
-        AddBeckonRequest a = fromJson(request().body().asJson(), AddBeckonRequest.class);
+        ShoutAddRequest a = fromJson(request().body().asJson(), ShoutAddRequest.class);
         User user = (User) Http.Context.current().args.get("userObject");
 
-        Beckon b = new Beckon();
+        Shout b = new Shout();
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
@@ -62,12 +78,12 @@ public class BeckonController extends Controller{
         b.setTitle(a.title);
         b.setLocation(a.location);
 
-        BeckonMembership m = new BeckonMembership();
+        ShoutMembership m = new ShoutMembership();
         m.setUser(user);
-        m.setBeckon(b);
+        m.setShout(b);
         b.getMembers().add(m);
-        m.setRole(BeckonMembership.Role.CREATOR);
-        m.setStatus(BeckonMembership.Status.ACCEPTED);
+        m.setRole(ShoutMembership.Role.CREATOR);
+        m.setStatus(ShoutMembership.Status.ACCEPTED);
         user.getBeckons().add(m);
         m.save();
 
@@ -75,12 +91,12 @@ public class BeckonController extends Controller{
             f.refresh();
             Logger.debug(f.getNickname());
             Logger.debug(f.getFriend().getEmail());
-            m = new BeckonMembership();
+            m = new ShoutMembership();
             m.setUser(f.getFriend());
-            m.setBeckon(b);
+            m.setShout(b);
             b.getMembers().add(m);
-            m.setRole(BeckonMembership.Role.MEMBER);
-            m.setStatus(BeckonMembership.Status.INVITED);
+            m.setRole(ShoutMembership.Role.MEMBER);
+            m.setStatus(ShoutMembership.Status.INVITED);
             f.getOwner().getBeckons().add(m);
             m.save();
 

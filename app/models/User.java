@@ -35,7 +35,7 @@ public class User extends Model {
     private List<Friendship> friendships = new ArrayList<Friendship>();
     @OneToMany(cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<BeckonMembership> beckons = new ArrayList<BeckonMembership>();
+    private List<ShoutMembership> beckons = new ArrayList<ShoutMembership>();
     @OneToMany(mappedBy = "owner", cascade=CascadeType.ALL)
     @JsonIgnore
     private List<Device> devices = new ArrayList<Device>();
@@ -121,11 +121,11 @@ public class User extends Model {
         this.devices = devices;
     }
 
-    public List<BeckonMembership> getBeckons() {
+    public List<ShoutMembership> getBeckons() {
         return beckons;
     }
 
-    public void setBeckons(List<BeckonMembership> beckons) {
+    public void setBeckons(List<ShoutMembership> beckons) {
         this.beckons = beckons;
     }
 

@@ -1,8 +1,6 @@
 package controllers;
 
-import classes.AddBeckonRequest;
 import com.amazonaws.services.sns.model.CreatePlatformEndpointResult;
-import models.Location;
 import play.libs.F;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -12,8 +10,6 @@ import support.mail.Mail;
 import support.notification.AWSNotificationService;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.concurrent.Callable;
 
 import static play.libs.Json.toJson;
 
@@ -27,13 +23,13 @@ public class TestController extends Controller {
         Mail m = new AWSMail();
 
         ArrayList<String> to = new ArrayList<>();
-        to.add("steffen@beckon.dk");
+        to.add("steffen@shout.dk");
 
         m.setTo(to);
-        m.setFrom("greeter@beckon.dk");
+        m.setFrom("greeter@shout.dk");
         m.setSubject("Welcome!");
-        m.setTextBody("Welcome to Beckon mate!");
-        m.setHtmlBody("<B>Welcome</B> to Beckon mate!");
+        m.setTextBody("Welcome to Shout mate!");
+        m.setHtmlBody("<B>Welcome</B> to Shout mate!");
 
         AWSMailService mailer = new AWSMailService();
 

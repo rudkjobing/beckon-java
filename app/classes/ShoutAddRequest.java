@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by Play on 11-04-2015.
  */
-public class AddBeckonRequest {
+public class ShoutAddRequest {
 
     public String title;
     public String begins;

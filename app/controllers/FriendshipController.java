@@ -1,15 +1,10 @@
 package controllers;
 
-import classes.AddFriendshipRequest;
+import classes.FriendshipAddRequest;
 import classes.FriendshipTransition;
-import classes.UpdateFriendshipRequest;
-import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.sns.AmazonSNSClient;
+import classes.FriendshipUpdateRequest;
 import com.avaje.ebean.Expr;
-import net.sf.ehcache.search.expression.Not;
 import support.notification.AWSNotificationService;
-import support.notification.NotificationService;
 import support.security.AuthenticateUser;
 import models.Friendship;
 import models.User;
@@ -32,7 +27,7 @@ public class FriendshipController extends Controller {
     @Security.Authenticated(AuthenticateUser.class)
     public static Result add(){
 
-        AddFriendshipRequest r = fromJson(request().body().asJson(), AddFriendshipRequest.class);
+        FriendshipAddRequest r = fromJson(request().body().asJson(), FriendshipAddRequest.class);
         User me = (User) Http.Context.current().args.get("userObject");
         User them = User.find.byId(r.getUserId());
 
@@ -74,7 +69,7 @@ public class FriendshipController extends Controller {
     @Security.Authenticated(AuthenticateUser.class)
     public static Result update(){
         User user = (User) Http.Context.current().args.get("userObject");
-        UpdateFriendshipRequest r = fromJson(request().body().asJson(), UpdateFriendshipRequest.class);
+        FriendshipUpdateRequest r = fromJson(request().body().asJson(), FriendshipUpdateRequest.class);
         Friendship f = Friendship.find.byId(r.getFriendId());
 
         f.setNickname(r.getNickname());

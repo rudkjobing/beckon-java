@@ -1,7 +1,7 @@
 package controllers;
 
+import classes.DeviceRegisterRequest;
 import classes.Password;
-import classes.RegisterDeviceRequest;
 import classes.SignInRequest;
 import classes.SignUpRequest;
 import com.amazonaws.services.sns.model.CreatePlatformEndpointResult;
@@ -78,7 +78,7 @@ public class AccountController extends Controller{
     @Security.Authenticated(AuthenticateUser.class)
     public static Result registerDevice(){
 
-        RegisterDeviceRequest request = fromJson(request().body().asJson(), RegisterDeviceRequest.class);
+        DeviceRegisterRequest request = fromJson(request().body().asJson(), DeviceRegisterRequest.class);
         User user = (User) Http.Context.current().args.get("userObject");
 
         Device device = Device.find.where()

@@ -1,23 +1,20 @@
 package classes;
 
-import models.User;
-
-
 /**
- * Created by Steffen Rudkjøbing on 07/01/15.
+ * Created by Steffen Rudkjøbing on 12/01/15.
  * © 2014 Steffen Rudkjøbing
  */
-public class UpdateFriendshipRequest {
+public class FriendshipAddRequest {
 
-    public Long id;
+    public Long userId;
     public String nickname;
 
-    public Long getFriendId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setFriendId(Long friendId) {
-        this.id = friendId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getNickname() {

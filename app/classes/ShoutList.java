@@ -1,34 +1,32 @@
 package classes;
 
-import models.BeckonMembership;
+import models.ShoutMembership;
 import models.Location;
-import models.User;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
  * Created by Play on 19-04-2015.
  */
-public class BeckonResult{
+public class ShoutList {
 
     public ArrayList<ShoutResultObject> beckons = new ArrayList<ShoutResultObject>();
 
-    public void addBeckon(BeckonMembership m){
+    public void addBeckon(ShoutMembership m){
 
         ShoutResultObject s = new ShoutResultObject();
 
-        s.accepted = m.getStatus() == BeckonMembership.Status.ACCEPTED;
-        s.begins = m.getBeckon().getBegins();
-        s.id = m.getBeckon().id;
-        s.location = m.getBeckon().getLocation();
-        s.begins = m.getBeckon().getBegins();
-        s.title = m.getBeckon().getTitle();
+        s.status = m.getStatus();
+        s.begins = m.getShout().getBegins();
+        s.id = m.getShout().id;
+        s.location = m.getShout().getLocation();
+        s.begins = m.getShout().getBegins();
+        s.title = m.getShout().getTitle();
 
-        for(BeckonMembership u : m.getBeckon().getMembers()){
+        for(ShoutMembership u : m.getShout().getMembers()){
             s.memberCount++;
-            if(u.getStatus() == BeckonMembership.Status.ACCEPTED){
+            if(u.getStatus() == ShoutMembership.Status.ACCEPTED){
                 s.acceptedCount ++;
                 if(s.acceptedMemberList.length() < 40 && s.acceptedMemberList.length() > 0){
                     s.acceptedMemberList = s.acceptedMemberList + ", " + u.getUser().getFirstName();
@@ -40,11 +38,14 @@ public class BeckonResult{
                     s.acceptedMemberList = s.acceptedMemberList + "...";
                 }
             }
-            else if(u.getStatus() == BeckonMembership.Status.DECLINED){
+            else if(u.getStatus() == ShoutMembership.Status.DECLINED){
                 s.declinedCount++;
             }
-            else if(u.getStatus() == BeckonMembership.Status.MAYBE){
+            else if(u.getStatus() == ShoutMembership.Status.MAYBE){
                 s.maybeCount++;
+            }
+            if(u.getRole() == ShoutMembership.Role.CREATOR){
+                s.createrName = u.getUser().getFirstName();
             }
         }
 
@@ -54,7 +55,8 @@ public class BeckonResult{
 
     private class ShoutResultObject{
 
-        public boolean accepted;
+        public ShoutMembership.Status status;
+        public String createrName;
         public Long id;
         public String title;
         public Location location;

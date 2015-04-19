@@ -1,6 +1,5 @@
 package models;
 
-import com.avaje.ebean.annotation.EnumMapping;
 import play.db.ebean.Model;
 
 import javax.persistence.*;
@@ -10,7 +9,7 @@ import javax.persistence.*;
  */
 
 @Entity
-public class BeckonMembership extends Model{
+public class ShoutMembership extends Model{
 
     public enum Status {INVITED, ACCEPTED, MAYBE, DECLINED};
     public enum Role {CREATOR, MEMBER, ADMIN}
@@ -18,7 +17,7 @@ public class BeckonMembership extends Model{
     @Id
     public Long id;
     @ManyToOne(cascade=CascadeType.ALL)
-    public Beckon beckon;
+    public Shout shout;
     @ManyToOne(cascade=CascadeType.ALL)
     public User user;
     @Enumerated(EnumType.STRING)
@@ -26,12 +25,12 @@ public class BeckonMembership extends Model{
     @Enumerated(EnumType.STRING)
     public Role role;
 
-    public Beckon getBeckon() {
-        return beckon;
+    public Shout getShout() {
+        return shout;
     }
 
-    public void setBeckon(Beckon beckon) {
-        this.beckon = beckon;
+    public void setShout(Shout shout) {
+        this.shout = shout;
     }
 
     public User getUser() {
@@ -57,4 +56,8 @@ public class BeckonMembership extends Model{
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public static Model.Finder<Long,ShoutMembership> find = new Model.Finder<Long,ShoutMembership>(
+            Long.class, ShoutMembership.class
+    );
 }

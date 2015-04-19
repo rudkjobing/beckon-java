@@ -9,8 +9,9 @@ POST        /account/device/register         controllers.AccountController.regis
 POST        /account/check         controllers.AccountController.check()
 
 # Beckon routes
-GET         /beckons               controllers.BeckonController.getAll()
-POST        /beckon                controllers.BeckonController.add()
+GET         /shouts                controllers.ShoutController.getAll()
+POST        /shout                 controllers.ShoutController.add()
+POST        /shout/membership/status    controllers.ShoutController.updateMemberStatus()
 
 # User routes
 POST        /users/search          controllers.UserController.search()
