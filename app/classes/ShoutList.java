@@ -20,6 +20,7 @@ public class ShoutList {
         s.status = m.getStatus();
         s.begins = m.getShout().getBegins();
         s.id = m.getShout().id;
+        s.memberId = m.id;
         s.location = m.getShout().getLocation();
         s.begins = m.getShout().getBegins();
         s.title = m.getShout().getTitle();
@@ -58,6 +59,7 @@ public class ShoutList {
         public ShoutMembership.Status status;
         public String createrName;
         public Long id;
+        public Long memberId;
         public String title;
         public Location location;
         public Date begins;

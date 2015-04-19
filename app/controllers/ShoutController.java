@@ -29,8 +29,8 @@ public class ShoutController extends Controller{
 
         ShoutMemberTransition transition = fromJson(request().body().asJson(), ShoutMemberTransition.class);
 
-        ShoutMembership member = ShoutMembership.find.byId(transition.shoutMemberId);
-        if(member.getUser() == user){
+        ShoutMembership member = ShoutMembership.find.byId(transition.memberId);
+        if(member.getUser().equals(user)){
             member.setStatus(transition.status);
             member.save();
             return ok(toJson(member));

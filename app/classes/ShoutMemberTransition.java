@@ -8,7 +8,7 @@ import models.ShoutMembership;
 public class ShoutMemberTransition {
 
     public Long shoutId;
-    public Long shoutMemberId;
+    public Long memberId;
     public ShoutMembership.Status status;
 
 }
