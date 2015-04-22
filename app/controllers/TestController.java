@@ -50,17 +50,6 @@ public class TestController extends Controller {
         );
     }
 
-    public static Result notification(){
-        AWSNotificationService s = new AWSNotificationService();
-        try{
-            s.sendNotification();
-        }
-        catch(Exception e){
-            return ok(e.getMessage());
-        }
-        return ok("notification sent... aight < (>.<) > ");
-    }
-
     public static Result createEndpoint(){
         AWSNotificationService s = new AWSNotificationService();
         try{

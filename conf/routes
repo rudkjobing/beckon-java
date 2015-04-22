@@ -25,7 +25,6 @@ POST        /friend/decline        controllers.FriendshipController.decline()
 
 # Test
 GET         /test/mail              controllers.TestController.mail()
-GET         /test/notification      controllers.TestController.notification()
 GET         /test/createEndpoint      controllers.TestController.createEndpoint()
 
 

@@ -10,8 +10,8 @@ import java.util.List;
  */
 public interface NotificationService {
 
-    public void sendNotification();
-    public void setMessage(String message);
-    public void setEndpoints(List<Device> devices);
+    public void addNotification(Notification notification);
+    public void removeNotification(Notification notification);
+    public void publish();
 
 }

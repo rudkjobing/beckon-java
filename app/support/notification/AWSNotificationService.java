@@ -5,10 +5,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNSClient;
-import com.amazonaws.services.sns.model.CreatePlatformEndpointRequest;
-import com.amazonaws.services.sns.model.CreatePlatformEndpointResult;
-import com.amazonaws.services.sns.model.Endpoint;
-import com.amazonaws.services.sns.model.PublishRequest;
+import com.amazonaws.services.sns.model.*;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import models.Device;
@@ -26,6 +23,7 @@ public class AWSNotificationService implements NotificationService{
     String arn;
     String message;
     List<Device> endpoints;
+    List<Notification> notifications;
 
     public AWSNotificationService(){
 
@@ -41,27 +39,28 @@ public class AWSNotificationService implements NotificationService{
 
     }
 
-    public void sendNotification(){
-
-        if(this.message == null || this.endpoints == null){
-            return;
-        }
-
-        for(Device d : this.endpoints){
-            PublishRequest p = new PublishRequest();
-            p.setTargetArn(d.getArn());
-            p.setMessage(this.message);
-            this.service.publish(p);
-        }
-
+    @Override
+    public void addNotification(Notification notification) {
+        this.notifications.add(notification);
     }
 
-    public void setMessage(String message){
-        this.message = message;
+    @Override
+    public void removeNotification(Notification notification) {
+        this.notifications.remove(notification);
     }
 
-    public void setEndpoints(List<Device> devices){
-        this.endpoints = devices;
+    @Override
+    public void publish() {
+
+        for(Notification notification : this.notifications){
+            for(Device d : notification.getEndpoints()){
+                PublishRequest p = new PublishRequest();
+                p.setTargetArn(d.getArn());
+                p.setMessage(notification.getMessage());
+                this.service.publish(p);
+            }
+        }
+
     }
 
     public CreatePlatformEndpointResult createEndpoint(String uuid){

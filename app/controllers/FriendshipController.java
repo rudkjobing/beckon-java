@@ -4,7 +4,9 @@ import classes.FriendshipAddRequest;
 import classes.FriendshipTransition;
 import classes.FriendshipUpdateRequest;
 import com.avaje.ebean.Expr;
+import support.notification.AWSNotification;
 import support.notification.AWSNotificationService;
+import support.notification.Notification;
 import support.security.AuthenticateUser;
 import models.Friendship;
 import models.User;
@@ -59,9 +61,11 @@ public class FriendshipController extends Controller {
 
         AWSNotificationService service = new AWSNotificationService();
 
-        service.setEndpoints(them.getDevices());
-        service.setMessage(me.getFirstName() + " " + me.getLastName() + " wants to be friends with you!");
-        service.sendNotification();
+        Notification notification = new AWSNotification()
+                .setEndpoints(them.getDevices())
+                .setMessage(me.getFirstName() + " " + me.getLastName() + " wants to be friends with you!");
+
+        service.publish();
 
         return ok();
     }
@@ -139,9 +143,11 @@ public class FriendshipController extends Controller {
 
         AWSNotificationService service = new AWSNotificationService();
 
-        service.setEndpoints(peer.getOwner().getDevices());
-        service.setMessage(user.getFirstName() + " " + user.getLastName() + " has accepted your friend request!");
-        service.sendNotification();
+        Notification notification = new AWSNotification()
+                .setEndpoints(peer.getOwner().getDevices())
+                .setMessage(user.getFirstName() + " " + user.getLastName() + " has accepted your friend request!");
+
+        service.publish();
 
         return ok();
     }

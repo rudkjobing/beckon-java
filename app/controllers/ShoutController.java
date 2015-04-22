@@ -7,7 +7,9 @@ import com.avaje.ebean.annotation.Transactional;
 import models.*;
 import play.Logger;
 import play.mvc.*;
+import support.notification.AWSNotification;
 import support.notification.AWSNotificationService;
+import support.notification.Notification;
 import support.security.AuthenticateUser;
 
 import java.text.SimpleDateFormat;
@@ -33,6 +35,10 @@ public class ShoutController extends Controller{
         if(member.getUser().equals(user)){
             member.setStatus(transition.status);
             member.save();
+            AWSNotificationService service = new AWSNotificationService();
+            if(transition.status.equals(ShoutMembership.Status.ACCEPTED)){
+
+            }
             return ok(toJson(member));
         }
 
@@ -87,6 +93,8 @@ public class ShoutController extends Controller{
         user.getBeckons().add(m);
         m.save();
 
+        AWSNotificationService service = new AWSNotificationService();
+
         for(Friendship f : a.members) {
             f.refresh();
             Logger.debug(f.getNickname());
@@ -100,12 +108,15 @@ public class ShoutController extends Controller{
             f.getOwner().getBeckons().add(m);
             m.save();
 
-            AWSNotificationService service = new AWSNotificationService();
+            Notification notification = new AWSNotification()
+                    .setEndpoints(f.getFriend().getDevices())
+                    .setMessage(user.getFirstName() + " " + user.getLastName() + " has invited you to " + b.getTitle());
 
-            service.setEndpoints(f.getFriend().getDevices());
-            service.setMessage(user.getFirstName() + " " + user.getLastName() + " has invited you to " + b.getTitle());
-            service.sendNotification();
+            service.addNotification(notification);
+
         }
+
+        service.publish();
 
         b.save();
 
