@@ -3,8 +3,11 @@ package controllers;
 import classes.ShoutAddRequest;
 import classes.ShoutList;
 import classes.ShoutMemberTransition;
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.annotation.Transactional;
 import models.*;
+import org.apache.commons.lang3.time.DateUtils;
+import org.joda.time.DateTime;
 import play.Logger;
 import play.mvc.*;
 import support.notification.AWSNotification;
@@ -13,6 +16,7 @@ import support.notification.Notification;
 import support.security.AuthenticateUser;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -52,9 +56,13 @@ public class ShoutController extends Controller{
         User user = (User) Http.Context.current().args.get("userObject");
         ShoutList b = new ShoutList();
 
-        List<ShoutMembership> beckons = user.getBeckons();
+        Date nowMinusHours = DateUtils.addHours(new Date(), -2);
 
-        for(ShoutMembership m : beckons){
+        List<ShoutMembership> shouts = ShoutMembership.find.where().and(
+                Expr.eq("user", user), Expr.gt("shout.begins", nowMinusHours)
+        ).findList();
+
+        for(ShoutMembership m : shouts){
             b.addBeckon(m);
         }
         return ok(toJson(b.beckons));

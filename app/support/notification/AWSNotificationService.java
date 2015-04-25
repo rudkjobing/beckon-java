@@ -23,7 +23,7 @@ public class AWSNotificationService implements NotificationService{
     String arn;
     String message;
     List<Device> endpoints;
-    List<Notification> notifications;
+    List<Notification> notifications = new ArrayList<>();
 
     public AWSNotificationService(){
 
