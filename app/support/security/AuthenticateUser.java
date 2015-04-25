@@ -7,7 +7,7 @@ import play.mvc.*;
 
 /**
  * Created by Steffen Rudkjøbing on 03/01/15.
- * © 2014 Steffen H Rudkjøbing
+ * © 2014 Steffen Harbom Rudkjøbing
  */
 public class AuthenticateUser extends Security.Authenticator {
 
