@@ -75,29 +75,29 @@ public class ShoutController extends Controller{
     @Security.Authenticated(AuthenticateUser.class)
     public static Result add(){
 
-        ShoutAddRequest a = fromJson(request().body().asJson(), ShoutAddRequest.class);
+        ShoutAddRequest shoutRequest = fromJson(request().body().asJson(), ShoutAddRequest.class);
         User user = (User) Http.Context.current().args.get("userObject");
 
         ObjectNode result = Json.newObject();
 
-        if(a.title.equals("")){
+        if(shoutRequest.title.equals("")){
 
             result.put("success", false);
             result.put("message", "Title must not be empty");
             return badRequest(result);
         }
 
-        Shout b = new Shout();
+        Shout newShout = new Shout();
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
         try {
 
-            Date date = formatter.parse(a.begins);
+            Date date = formatter.parse(shoutRequest.begins);
             if(date.before(DateUtils.addHours(new Date(), -2))){
                 throw new Exception("Date is too far in the past");
             }
-            b.setBegins(date);
+            newShout.setBegins(date);
 
         } catch (Exception e) {
             result.put("success", false);
@@ -105,36 +105,36 @@ public class ShoutController extends Controller{
             return badRequest(result);
         }
 
-        b.setTitle(a.title);
-        b.setLocation(a.location);
+        newShout.setTitle(shoutRequest.title);
+        newShout.setLocation(shoutRequest.location);
 
-        ShoutMembership m = new ShoutMembership();
-        m.setUser(user);
-        m.setShout(b);
-        b.getMembers().add(m);
-        m.setRole(ShoutMembership.Role.CREATOR);
-        m.setStatus(ShoutMembership.Status.ACCEPTED);
-        user.getBeckons().add(m);
-        m.save();
+        ShoutMembership member = new ShoutMembership();
+        member.setUser(user);
+        member.setShout(newShout);
+        newShout.getMembers().add(member);
+        member.setRole(ShoutMembership.Role.CREATOR);
+        member.setStatus(ShoutMembership.Status.ACCEPTED);
+        user.getBeckons().add(member);
+        member.save();
 
         AWSNotificationService service = new AWSNotificationService();
 
-        for(Friendship f : a.members) {
-            f.refresh();
-            Logger.debug(f.getNickname());
-            Logger.debug(f.getFriend().getEmail());
-            m = new ShoutMembership();
-            m.setUser(f.getFriend());
-            m.setShout(b);
-            b.getMembers().add(m);
-            m.setRole(ShoutMembership.Role.MEMBER);
-            m.setStatus(ShoutMembership.Status.INVITED);
-            f.getOwner().getBeckons().add(m);
-            m.save();
+        for(Friendship friend : shoutRequest.members) {
+            friend.refresh();
+            Logger.debug(friend.getNickname());
+            Logger.debug(friend.getFriend().getEmail());
+            member = new ShoutMembership();
+            member.setUser(friend.getFriend());
+            member.setShout(newShout);
+            newShout.getMembers().add(member);
+            member.setRole(ShoutMembership.Role.MEMBER);
+            member.setStatus(ShoutMembership.Status.INVITED);
+            friend.getOwner().getBeckons().add(member);
+            member.save();
 
             Notification notification = new AWSNotification()
-                    .setEndpoints(f.getFriend().getDevices())
-                    .setMessage(user.getFirstName() + " " + user.getLastName() + " has invited you to " + b.getTitle());
+                    .setEndpoints(friend.getFriend().getDevices())
+                    .setMessage(user.getFirstName() + " " + user.getLastName() + " has invited you to " + newShout.getTitle());
 
             service.addNotification(notification);
 
@@ -142,7 +142,7 @@ public class ShoutController extends Controller{
 
         service.publish();
 
-        b.save();
+        newShout.save();
 
         return ok();
 
