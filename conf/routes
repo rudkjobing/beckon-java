@@ -7,8 +7,9 @@ POST        /account/signIn        controllers.AccountController.signIn()
 POST        /account/signUp        controllers.AccountController.signUp()
 POST        /account/device/register         controllers.AccountController.registerDevice()
 POST        /account/check         controllers.AccountController.check()
+GET         /                      controllers.UserController.online()
 
-# Beckon routes
+# Shout routes
 GET         /shouts                controllers.ShoutController.getAll()
 POST        /shout                 controllers.ShoutController.add()
 POST        /shout/membership/status    controllers.ShoutController.updateMemberStatus()

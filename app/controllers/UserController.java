@@ -32,4 +32,8 @@ public class UserController extends Controller{
 
     }
 
+    public static Result online(){
+        return ok();
+    }
+
 }
