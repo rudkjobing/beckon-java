@@ -80,7 +80,7 @@ PORT=
 APP_DIR=
 
 # Example:
- NAME=broshout
+ NAME=play-java
  PORT=9000
  APP_DIR=/home/jenkins/play-java-1.0-SNAPSHOT
 
