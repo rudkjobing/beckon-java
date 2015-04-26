@@ -5,10 +5,12 @@ import classes.ShoutList;
 import classes.ShoutMemberTransition;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.annotation.Transactional;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.*;
 import org.apache.commons.lang3.time.DateUtils;
 import org.joda.time.DateTime;
 import play.Logger;
+import play.libs.Json;
 import play.mvc.*;
 import support.notification.AWSNotification;
 import support.notification.AWSNotificationService;
@@ -60,7 +62,7 @@ public class ShoutController extends Controller{
 
         List<ShoutMembership> shouts = ShoutMembership.find.where().and(
                 Expr.eq("user", user), Expr.gt("shout.begins", nowMinusHours)
-        ).findList();
+        ).order().asc("shout.begins").findList();
 
         for(ShoutMembership m : shouts){
             b.addBeckon(m);
@@ -76,6 +78,15 @@ public class ShoutController extends Controller{
         ShoutAddRequest a = fromJson(request().body().asJson(), ShoutAddRequest.class);
         User user = (User) Http.Context.current().args.get("userObject");
 
+        ObjectNode result = Json.newObject();
+
+        if(a.title.equals("")){
+
+            result.put("success", false);
+            result.put("message", "Title must not be empty");
+            return badRequest(result);
+        }
+
         Shout b = new Shout();
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
@@ -83,10 +94,15 @@ public class ShoutController extends Controller{
         try {
 
             Date date = formatter.parse(a.begins);
+            if(date.before(DateUtils.addHours(new Date(), -2))){
+                throw new Exception("Date is too far in the past");
+            }
             b.setBegins(date);
 
         } catch (Exception e) {
-            return internalServerError();
+            result.put("success", false);
+            result.put("message", "Invalid date");
+            return badRequest(result);
         }
 
         b.setTitle(a.title);

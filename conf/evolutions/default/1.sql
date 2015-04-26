@@ -4,19 +4,19 @@
 # --- !Ups
 
 create table device (
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   arn                       varchar(255),
   uuid                      varchar(255),
   owner_id                  bigint,
   type                      varchar(7),
-  first_registered          timestamp,
-  last_registered           timestamp,
+  first_registered          datetime,
+  last_registered           datetime,
   constraint ck_device_type check (type in ('APPLE','ANDROID','WINDOWS')),
   constraint pk_device primary key (id))
 ;
 
 create table friendship (
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   nickname                  varchar(255),
   owner_id                  bigint,
   friend_id                 bigint,
@@ -27,7 +27,7 @@ create table friendship (
 ;
 
 create table location (
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   name                      varchar(255),
   latitude                  double,
   longitude                 double,
@@ -35,25 +35,25 @@ create table location (
 ;
 
 create table session (
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   uuid                      varchar(255),
   user_id                   bigint,
-  expires                   timestamp,
+  expires                   datetime,
   constraint uq_session_uuid unique (uuid),
   constraint pk_session primary key (id))
 ;
 
 create table shout (
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   title                     varchar(255),
   description               varchar(255),
-  begins                    timestamp,
+  begins                    datetime,
   location_id               bigint,
   constraint pk_shout primary key (id))
 ;
 
 create table shout_membership (
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   shout_id                  bigint,
   user_id                   bigint,
   status                    varchar(8),
@@ -64,7 +64,7 @@ create table shout_membership (
 ;
 
 create table user (
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   first_name                varchar(255),
   last_name                 varchar(255),
   region                    varchar(255),
@@ -75,20 +75,6 @@ create table user (
   constraint uq_user_email unique (email),
   constraint pk_user primary key (id))
 ;
-
-create sequence device_seq;
-
-create sequence friendship_seq;
-
-create sequence location_seq;
-
-create sequence session_seq;
-
-create sequence shout_seq;
-
-create sequence shout_membership_seq;
-
-create sequence user_seq;
 
 alter table device add constraint fk_device_owner_1 foreign key (owner_id) references user (id) on delete restrict on update restrict;
 create index ix_device_owner_1 on device (owner_id);
@@ -111,35 +97,21 @@ create index ix_shout_membership_user_8 on shout_membership (user_id);
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+SET FOREIGN_KEY_CHECKS=0;
 
-drop table if exists device;
+drop table device;
 
-drop table if exists friendship;
+drop table friendship;
 
-drop table if exists location;
+drop table location;
 
-drop table if exists session;
+drop table session;
 
-drop table if exists shout;
+drop table shout;
 
-drop table if exists shout_membership;
+drop table shout_membership;
 
-drop table if exists user;
+drop table user;
 
-SET REFERENTIAL_INTEGRITY TRUE;
-
-drop sequence if exists device_seq;
-
-drop sequence if exists friendship_seq;
-
-drop sequence if exists location_seq;
-
-drop sequence if exists session_seq;
-
-drop sequence if exists shout_seq;
-
-drop sequence if exists shout_membership_seq;
-
-drop sequence if exists user_seq;
+SET FOREIGN_KEY_CHECKS=1;
 

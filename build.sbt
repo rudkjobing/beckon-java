@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   javaWs,
   "mysql" % "mysql-connector-java" % "5.1.34",
   "com.amazonaws" % "aws-java-sdk" % "1.9.17",
+  "commons-validator" % "commons-validator" % "1.4.0",
   javaEbean
 )
 

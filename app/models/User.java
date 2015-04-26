@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import org.apache.commons.validator.routines.EmailValidator;
 import play.db.ebean.Model;
 
 import javax.persistence.*;
@@ -50,8 +51,13 @@ public class User extends Model {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail(String email) throws Exception{
+        if(!EmailValidator.getInstance().isValid(email)){
+            throw new Exception("Sorry invalid email :(");
+        }
+        else{
+            this.email = email;
+        }
     }
 
     public List<Friendship> getFriendships() {
@@ -93,7 +99,7 @@ public class User extends Model {
             this.phoneNumber = phoneUtil.format(p, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
         }
         catch(Exception e){
-            throw e;
+            throw new Exception("Sorry invalid phonenumber :(");
         }
     }
 

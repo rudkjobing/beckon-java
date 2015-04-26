@@ -22,6 +22,9 @@ public class Password {
      suitable for storing in a database.
      Empty passwords are not supported. */
     public static String getSaltedHash(String password) throws Exception {
+        if(password.length() < 4){
+            throw new Exception("Passwords must be longer than 3 characters");
+        }
         byte[] salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLen);
         // store the salt with the password
         return Base64.encodeBase64String(salt) + "$" + hash(password, salt);

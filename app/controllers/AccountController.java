@@ -8,6 +8,7 @@ import com.amazonaws.services.sns.model.CreatePlatformEndpointResult;
 import com.avaje.ebean.Expr;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.*;
+import org.apache.commons.validator.routines.EmailValidator;
 import play.libs.Json;
 import play.mvc.*;
 import support.notification.AWSNotificationService;
@@ -57,6 +58,9 @@ public class AccountController extends Controller{
         User newUser = new User();
 
         try {
+            if(request.firstName.equals("") || request.lastName.equals("")){
+                throw new Exception("Please enter first and last name");
+            }
             newUser.setEmail(request.email);
             newUser.setPhoneNumber(request.phoneNumber);
             newUser.setFirstName(request.firstName);
