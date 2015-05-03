@@ -5,6 +5,7 @@ import models.Location;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Play on 19-04-2015.
@@ -13,62 +14,56 @@ public class ShoutList {
 
     public ArrayList<ShoutResultObject> beckons = new ArrayList<ShoutResultObject>();
 
-    public void addBeckon(ShoutMembership m){
+    public void addShout(ShoutMembership membership){
 
-        ShoutResultObject s = new ShoutResultObject();
+        ShoutResultObject resultObject = new ShoutResultObject();
 
-        s.status = m.getStatus();
-        s.begins = m.getShout().getBegins();
-        s.id = m.getShout().id;
-        s.memberId = m.id;
-        s.location = m.getShout().getLocation();
-        s.begins = m.getShout().getBegins();
-        s.title = m.getShout().getTitle();
+        resultObject.status = membership.getStatus();
+        resultObject.begins = membership.getShout().getBegins();
+        resultObject.id = membership.getShout().id;
+        resultObject.memberId = membership.id;
+        resultObject.location = membership.getShout().getLocation();
+        resultObject.begins = membership.getShout().getBegins();
+        resultObject.title = membership.getShout().getTitle();
 
-        for(ShoutMembership u : m.getShout().getMembers()){
-            s.memberCount++;
-            if(u.getStatus() == ShoutMembership.Status.ACCEPTED){
-                s.acceptedCount ++;
-                if(s.acceptedMemberList.length() < 40 && s.acceptedMemberList.length() > 0){
-                    s.acceptedMemberList = s.acceptedMemberList + ", " + u.getUser().getFirstName();
-                }
-                else if(s.acceptedMemberList.length() < 40){
-                    s.acceptedMemberList = s.acceptedMemberList + u.getUser().getFirstName();
-                }
-                else{
-                    s.acceptedMemberList = s.acceptedMemberList + "...";
-                }
-            }
-            else if(u.getStatus() == ShoutMembership.Status.DECLINED){
-                s.declinedCount++;
-            }
-            else if(u.getStatus() == ShoutMembership.Status.MAYBE){
-                s.maybeCount++;
-            }
-            if(u.getRole() == ShoutMembership.Role.CREATOR){
-                s.createrName = u.getUser().getFirstName();
-            }
+        for(ShoutMembership otherMember : membership.getShout().getMembers()){
+            resultObject.memberList.add(
+                    new Member(
+                            otherMember.getUser().getFirstName(),
+                            otherMember.getStatus(),
+                            otherMember.getRole()
+                    )
+            );
         }
 
-        this.beckons.add(s);
+        this.beckons.add(resultObject);
 
     }
 
     private class ShoutResultObject{
 
         public ShoutMembership.Status status;
-        public String createrName;
+        public String creatorName;
         public Long id;
         public Long memberId;
         public String title;
         public Location location;
         public Date begins;
-        public int memberCount = 0;
-        public int acceptedCount = 0;
-        public int declinedCount = 0;
-        public int maybeCount = 0;
-        public String acceptedMemberList = "";
+        public List<Member> memberList = new ArrayList<>();
 
+    }
+
+    private class Member{
+
+        public Member(String name, ShoutMembership.Status status, ShoutMembership.Role role){
+            this.name = name;
+            this.status = status;
+            this.role = role;
+        }
+
+        public String name;
+        public ShoutMembership.Status status;
+        public ShoutMembership.Role role;
     }
 
 }

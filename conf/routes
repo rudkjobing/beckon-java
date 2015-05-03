@@ -7,7 +7,7 @@ POST        /account/signIn        controllers.AccountController.signIn()
 POST        /account/signUp        controllers.AccountController.signUp()
 POST        /account/device/register         controllers.AccountController.registerDevice()
 POST        /account/check         controllers.AccountController.check()
-GET         /                      controllers.UserController.online()
+GET         /verify                controllers.AccountController.verifyEmail(token: String)
 
 # Shout routes
 GET         /shouts                controllers.ShoutController.getAll()
@@ -16,6 +16,7 @@ POST        /shout/membership/status    controllers.ShoutController.updateMember
 
 # User routes
 POST        /users/search          controllers.UserController.search()
+GET         /                      controllers.UserController.online()
 
 # Friendship routes
 GET         /friendships           controllers.FriendshipController.getList(id: Long, status ?= null)

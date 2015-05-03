@@ -71,6 +71,9 @@ create table user (
   phone_number              varchar(255),
   email                     varchar(255),
   hash                      varchar(255),
+  email_validation_token    varchar(255),
+  status                    integer,
+  constraint ck_user_status check (status in (0,1,2)),
   constraint uq_user_phone_number unique (phone_number),
   constraint uq_user_email unique (email),
   constraint pk_user primary key (id))

@@ -22,6 +22,8 @@ public class User extends Model {
      * Properties
      */
 
+    public enum Status {INACTIVE, ACTIVE, BANNED};
+
     @Id
     public Long id;
     private String firstName;
@@ -42,6 +44,10 @@ public class User extends Model {
     private List<Device> devices = new ArrayList<Device>();
     @JsonIgnore
     private String hash;
+    @JsonIgnore
+    private String emailValidationToken;
+    @JsonIgnore
+    private Status status;
 
     /**
      * Getters And Setters
@@ -58,6 +64,22 @@ public class User extends Model {
         else{
             this.email = email;
         }
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public String getEmailValidationToken() {
+        return emailValidationToken;
+    }
+
+    public void setEmailValidationToken(String emailValidationToken) {
+        this.emailValidationToken = emailValidationToken;
     }
 
     public List<Friendship> getFriendships() {

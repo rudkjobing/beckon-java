@@ -8,13 +8,18 @@ import com.amazonaws.services.sns.model.CreatePlatformEndpointResult;
 import com.avaje.ebean.Expr;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.*;
-import org.apache.commons.validator.routines.EmailValidator;
+import play.Logger;
 import play.libs.Json;
 import play.mvc.*;
+import support.mail.AWSMail;
+import support.mail.AWSMailService;
+import support.mail.Mail;
 import support.notification.AWSNotificationService;
 import support.security.AuthenticateUser;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static play.libs.Json.fromJson;
 import static play.libs.Json.toJson;
@@ -32,8 +37,16 @@ public class AccountController extends Controller{
 
         /* Check that the supplied password matches the hash from the user object */
         try{
+            if(user.getStatus() == User.Status.INACTIVE){
+                throw new Exception("You must verify your email before logging in.");
+            }
+            else if(user.getStatus() == User.Status.BANNED){
+                throw new Exception("Sorry, you have been banned.");
+            }
+
             Password.check(request.password, user.getHash());
             result.put("success", true);
+
         }
         /* Passwords did not match, return bad request */
         catch(Exception e){
@@ -66,13 +79,28 @@ public class AccountController extends Controller{
             newUser.setFirstName(request.firstName);
             newUser.setLastName(request.lastName);
             newUser.setHash(Password.getSaltedHash(request.password));
+            newUser.setEmailValidationToken(Password.getSaltedHash(request.email));
+
+            Mail welcomeMail = new AWSMail();
+            List<String> to = new ArrayList<String>();
+            to.add("steffen@beckon.dk");
+            welcomeMail.setFrom("support@broshout.net");
+            welcomeMail.setTo(to);
+            welcomeMail.setSubject("Welcome Bro");
+            welcomeMail.setHtmlBody(views.html.mail.welcome_html.render(newUser.getFirstName(), "localhost:9000/verify?token=" + newUser.getEmailValidationToken()).body());
+            welcomeMail.setTextBody(views.html.mail.welcome_text.render(newUser.getFirstName(), "localhost:9000/verify?token=" + newUser.getEmailValidationToken()).body());
+
+            AWSMailService service = new AWSMailService();
+            service.sendMail(welcomeMail);
 
             newUser.save();
             result.put("success", true);
             result.put("message", "User created");
+
             return ok(result);
         }
         catch(Exception e){
+            Logger.debug(e.getMessage());
             result.put("success", false);
             result.put("message", e.getMessage());
             return badRequest(result);
@@ -125,6 +153,11 @@ public class AccountController extends Controller{
         User user = (User) Http.Context.current().args.get("userObject");
 
         return ok(toJson(user));
+    }
+
+    public static Result verifyEmail(String token){
+
+        return ok(views.html.web.verify_email.render("Steffen"));
     }
 
 }

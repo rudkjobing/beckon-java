@@ -8,7 +8,6 @@ import com.avaje.ebean.annotation.Transactional;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.*;
 import org.apache.commons.lang3.time.DateUtils;
-import org.joda.time.DateTime;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.*;
@@ -18,7 +17,6 @@ import support.notification.Notification;
 import support.security.AuthenticateUser;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -65,7 +63,7 @@ public class ShoutController extends Controller{
         ).order().asc("shout.begins").findList();
 
         for(ShoutMembership m : shouts){
-            b.addBeckon(m);
+            b.addShout(m);
         }
         return ok(toJson(b.beckons));
 
