@@ -20,6 +20,7 @@ public class Friendship extends Model{
 
     @Id
     public Long id;
+    @JsonIgnore
     public String nickname;
     @ManyToOne
     @JsonIgnore

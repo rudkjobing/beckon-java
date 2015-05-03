@@ -45,8 +45,6 @@ public class User extends Model {
     @JsonIgnore
     private String hash;
     @JsonIgnore
-    private String emailValidationToken;
-    @JsonIgnore
     private Status status;
 
     /**
@@ -72,14 +70,6 @@ public class User extends Model {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public String getEmailValidationToken() {
-        return emailValidationToken;
-    }
-
-    public void setEmailValidationToken(String emailValidationToken) {
-        this.emailValidationToken = emailValidationToken;
     }
 
     public List<Friendship> getFriendships() {

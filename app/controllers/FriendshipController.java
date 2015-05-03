@@ -2,12 +2,11 @@ package controllers;
 
 import classes.FriendshipAddRequest;
 import classes.FriendshipTransition;
-import classes.FriendshipUpdateRequest;
 import com.avaje.ebean.Expr;
 import support.notification.AWSNotification;
 import support.notification.AWSNotificationService;
 import support.notification.Notification;
-import support.security.AuthenticateUser;
+import support.security.AuthenticateCookie;
 import models.Friendship;
 import models.User;
 import play.mvc.Controller;
@@ -26,7 +25,7 @@ import static play.libs.Json.toJson;
  */
 public class FriendshipController extends Controller {
 
-    @Security.Authenticated(AuthenticateUser.class)
+    @Security.Authenticated(AuthenticateCookie.class)
     public static Result add(){
 
         FriendshipAddRequest r = fromJson(request().body().asJson(), FriendshipAddRequest.class);
@@ -41,12 +40,10 @@ public class FriendshipController extends Controller {
         Friendship theirFriendship = new Friendship();
 
         myFriendship.setFriend(them);
-        myFriendship.setNickname(r.getNickname());
         myFriendship.setOwner(me);
         myFriendship.setStatus(Friendship.Status.INVITED);
 
         theirFriendship.setFriend(me);
-        theirFriendship.setNickname(me.getFirstName());
         theirFriendship.setOwner(them);
         theirFriendship.setStatus(Friendship.Status.PENDING);
 
@@ -70,19 +67,7 @@ public class FriendshipController extends Controller {
         return ok();
     }
 
-    @Security.Authenticated(AuthenticateUser.class)
-    public static Result update(){
-        User user = (User) Http.Context.current().args.get("userObject");
-        FriendshipUpdateRequest r = fromJson(request().body().asJson(), FriendshipUpdateRequest.class);
-        Friendship f = Friendship.find.byId(r.getFriendId());
-
-        f.setNickname(r.getNickname());
-        f.save();
-
-        return ok();
-    }
-
-    @Security.Authenticated(AuthenticateUser.class)
+    @Security.Authenticated(AuthenticateCookie.class)
     public static Result getList(Long id, String status){
 
         User user = (User) Http.Context.current().args.get("userObject");
@@ -123,14 +108,14 @@ public class FriendshipController extends Controller {
 
     }
 
-    @Security.Authenticated(AuthenticateUser.class)
+    @Security.Authenticated(AuthenticateCookie.class)
     public static Result delete(){
 
         User user = (User) Http.Context.current().args.get("userObject");
         return ok();
     }
 
-    @Security.Authenticated(AuthenticateUser.class)
+    @Security.Authenticated(AuthenticateCookie.class)
     public static Result accept(){
         User user = (User) Http.Context.current().args.get("userObject");
         FriendshipTransition ft = fromJson(request().body().asJson(), FriendshipTransition.class);

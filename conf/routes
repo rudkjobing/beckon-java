@@ -7,7 +7,7 @@ POST        /account/signIn        controllers.AccountController.signIn()
 POST        /account/signUp        controllers.AccountController.signUp()
 POST        /account/device/register         controllers.AccountController.registerDevice()
 POST        /account/check         controllers.AccountController.check()
-GET         /verify                controllers.AccountController.verifyEmail(token: String)
+GET         /verify                controllers.AccountController.verifyEmail()
 
 # Shout routes
 GET         /shouts                controllers.ShoutController.getAll()
@@ -21,7 +21,6 @@ GET         /                      controllers.UserController.online()
 # Friendship routes
 GET         /friendships           controllers.FriendshipController.getList(id: Long, status ?= null)
 PUT         /friend                controllers.FriendshipController.add()
-POST        /friend                controllers.FriendshipController.update()
 POST        /friend/accept         controllers.FriendshipController.accept()
 POST        /friend/decline        controllers.FriendshipController.decline()
 

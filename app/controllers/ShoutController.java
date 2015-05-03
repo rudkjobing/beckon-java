@@ -14,7 +14,7 @@ import play.mvc.*;
 import support.notification.AWSNotification;
 import support.notification.AWSNotificationService;
 import support.notification.Notification;
-import support.security.AuthenticateUser;
+import support.security.AuthenticateCookie;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,7 +28,7 @@ import static play.libs.Json.toJson;
  */
 public class ShoutController extends Controller{
 
-    @Security.Authenticated(AuthenticateUser.class)
+    @Security.Authenticated(AuthenticateCookie.class)
     public static Result updateMemberStatus(){
 
         User user = (User) Http.Context.current().args.get("userObject");
@@ -50,7 +50,7 @@ public class ShoutController extends Controller{
 
     }
 
-    @Security.Authenticated(AuthenticateUser.class)
+    @Security.Authenticated(AuthenticateCookie.class)
     public static Result getAll(){
 
         User user = (User) Http.Context.current().args.get("userObject");
@@ -70,7 +70,7 @@ public class ShoutController extends Controller{
     }
 
     @Transactional
-    @Security.Authenticated(AuthenticateUser.class)
+    @Security.Authenticated(AuthenticateCookie.class)
     public static Result add(){
 
         ShoutAddRequest shoutRequest = fromJson(request().body().asJson(), ShoutAddRequest.class);

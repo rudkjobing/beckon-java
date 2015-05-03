@@ -15,11 +15,13 @@ import support.mail.AWSMail;
 import support.mail.AWSMailService;
 import support.mail.Mail;
 import support.notification.AWSNotificationService;
-import support.security.AuthenticateUser;
+import support.security.AuthenticateCookie;
+import support.security.AuthenticateToken;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static play.libs.Json.fromJson;
 import static play.libs.Json.toJson;
@@ -32,7 +34,7 @@ public class AccountController extends Controller{
     public static Result signIn(){
         /* Get the request body and deserialize it */
         SignInRequest request = fromJson(request().body().asJson(), SignInRequest.class);
-        User user = User.find.where().eq("email", request.email).findUnique();
+        User user = User.find.where().eq("email", request.email.toLowerCase()).findUnique();
         ObjectNode result = Json.newObject();
 
         /* Check that the supplied password matches the hash from the user object */
@@ -74,12 +76,14 @@ public class AccountController extends Controller{
             if(request.firstName.equals("") || request.lastName.equals("")){
                 throw new Exception("Please enter first and last name");
             }
-            newUser.setEmail(request.email);
-            newUser.setPhoneNumber(request.phoneNumber);
+
+            newUser.setEmail(request.email.toLowerCase());
             newUser.setFirstName(request.firstName);
             newUser.setLastName(request.lastName);
             newUser.setHash(Password.getSaltedHash(request.password));
-            newUser.setEmailValidationToken(Password.getSaltedHash(request.email));
+            newUser.setStatus(User.Status.INACTIVE);
+
+            Session emailSession = new Session(newUser);
 
             Mail welcomeMail = new AWSMail();
             List<String> to = new ArrayList<String>();
@@ -87,13 +91,15 @@ public class AccountController extends Controller{
             welcomeMail.setFrom("support@broshout.net");
             welcomeMail.setTo(to);
             welcomeMail.setSubject("Welcome Bro");
-            welcomeMail.setHtmlBody(views.html.mail.welcome_html.render(newUser.getFirstName(), "localhost:9000/verify?token=" + newUser.getEmailValidationToken()).body());
-            welcomeMail.setTextBody(views.html.mail.welcome_text.render(newUser.getFirstName(), "localhost:9000/verify?token=" + newUser.getEmailValidationToken()).body());
+            welcomeMail.setHtmlBody(views.html.mail.welcome_html.render(newUser.getFirstName(), "http://localhost:9000/verify?token=" + emailSession.getUuid()).body());
+            welcomeMail.setTextBody(views.html.mail.welcome_text.render(newUser.getFirstName(), "http://localhost:9000/verify?token=" + emailSession.getUuid()).body());
 
             AWSMailService service = new AWSMailService();
             service.sendMail(welcomeMail);
 
             newUser.save();
+            emailSession.save();
+
             result.put("success", true);
             result.put("message", "User created");
 
@@ -107,7 +113,7 @@ public class AccountController extends Controller{
         }
     }
 
-    @Security.Authenticated(AuthenticateUser.class)
+    @Security.Authenticated(AuthenticateCookie.class)
     public static Result registerDevice(){
 
         DeviceRegisterRequest request = fromJson(request().body().asJson(), DeviceRegisterRequest.class);
@@ -147,17 +153,23 @@ public class AccountController extends Controller{
 
     }
 
-    @Security.Authenticated(AuthenticateUser.class)
+    @Security.Authenticated(AuthenticateCookie.class)
     public static Result check(){
 
         User user = (User) Http.Context.current().args.get("userObject");
 
         return ok(toJson(user));
+
     }
 
-    public static Result verifyEmail(String token){
+    @Security.Authenticated(AuthenticateToken.class)
+    public static Result verifyEmail(){
 
-        return ok(views.html.web.verify_email.render("Steffen"));
+        User user = (User) Http.Context.current().args.get("userObject");
+        user.setStatus(User.Status.ACTIVE);
+        user.save();
+        return ok(views.html.web.verify_email.render(user.getFirstName()));
+
     }
 
 }

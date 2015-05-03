@@ -2,7 +2,7 @@ package controllers;
 
 import classes.SearchQuery;
 import com.avaje.ebean.Expr;
-import support.security.AuthenticateUser;
+import support.security.AuthenticateCookie;
 import models.User;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -20,7 +20,7 @@ import static play.libs.Json.toJson;
  */
 public class UserController extends Controller{
 
-    @Security.Authenticated(AuthenticateUser.class)
+    @Security.Authenticated(AuthenticateCookie.class)
     public static Result search(){
 
         SearchQuery query = fromJson(request().body().asJson(), SearchQuery.class);

@@ -7,7 +7,6 @@ package classes;
 public class FriendshipAddRequest {
 
     public Long userId;
-    public String nickname;
 
     public Long getUserId() {
         return userId;
@@ -17,11 +16,4 @@ public class FriendshipAddRequest {
         this.userId = userId;
     }
 
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
 }

@@ -10,6 +10,7 @@ import support.mail.Mail;
 import support.notification.AWSNotificationService;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static play.libs.Json.toJson;
 
@@ -51,14 +52,8 @@ public class TestController extends Controller {
     }
 
     public static Result createEndpoint(){
-        AWSNotificationService s = new AWSNotificationService();
-        try{
-            CreatePlatformEndpointResult r = s.createEndpoint("013adbda7aea59b7fe47f067838e6b1421f3badc3c4ad34b61dbb03a60b779e4");
-            return ok(toJson(r));
-        }
-        catch(Exception e){
-            return ok(e.getMessage());
-        }
+
+        return ok();
     }
 
 }
