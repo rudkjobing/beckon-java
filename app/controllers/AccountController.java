@@ -91,8 +91,8 @@ public class AccountController extends Controller{
             welcomeMail.setFrom("support@broshout.net");
             welcomeMail.setTo(to);
             welcomeMail.setSubject("Welcome Bro");
-            welcomeMail.setHtmlBody(views.html.mail.welcome_html.render(newUser.getFirstName(), "http://localhost:9000/verify?token=" + emailSession.getUuid()).body());
-            welcomeMail.setTextBody(views.html.mail.welcome_text.render(newUser.getFirstName(), "http://localhost:9000/verify?token=" + emailSession.getUuid()).body());
+            welcomeMail.setHtmlBody(views.html.mail.welcome_html.render(newUser.getFirstName(), "http://api.broshout.net:9000/verify?token=" + emailSession.getUuid()).body());
+            welcomeMail.setTextBody(views.html.mail.welcome_text.render(newUser.getFirstName(), "http://api.broshout.net:9000/verify?token=" + emailSession.getUuid()).body());
 
             AWSMailService service = new AWSMailService();
             service.sendMail(welcomeMail);
