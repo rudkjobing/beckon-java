@@ -88,9 +88,9 @@ public class AccountController extends Controller{
             Mail welcomeMail = new AWSMail();
             List<String> to = new ArrayList<String>();
             to.add("steffen@beckon.dk");
-            welcomeMail.setFrom("support@broshout.net");
+            welcomeMail.setFrom("steffen@broshout.net");
             welcomeMail.setTo(to);
-            welcomeMail.setSubject("Welcome Bro");
+            welcomeMail.setSubject("Welcome!");
             welcomeMail.setHtmlBody(views.html.mail.welcome_html.render(newUser.getFirstName(), "http://api.broshout.net:9000/verify?token=" + emailSession.getUuid()).body());
             welcomeMail.setTextBody(views.html.mail.welcome_text.render(newUser.getFirstName(), "http://api.broshout.net:9000/verify?token=" + emailSession.getUuid()).body());
 
