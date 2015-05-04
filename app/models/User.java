@@ -29,8 +29,8 @@ public class User extends Model {
     private String firstName;
     private String lastName;
     private String region = "DK";
-    @Column(unique=true)
-    private String phoneNumber;
+//    @Column(unique=true)
+//    private String phoneNumber;
     @Column(unique=true)
     private String email;
     @OneToMany(mappedBy = "owner",cascade=CascadeType.ALL)
@@ -100,20 +100,20 @@ public class User extends Model {
         this.lastName = lastName;
     }
 
-    public String getPhoneNumber() {
-        return this.phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) throws Exception{
-        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-        try{
-            Phonenumber.PhoneNumber p = phoneUtil.parse(phoneNumber, this.region);
-            this.phoneNumber = phoneUtil.format(p, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
-        }
-        catch(Exception e){
-            throw new Exception("Sorry invalid phonenumber :(");
-        }
-    }
+//    public String getPhoneNumber() {
+//        return this.phoneNumber;
+//    }
+//
+//    public void setPhoneNumber(String phoneNumber) throws Exception{
+//        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+//        try{
+//            Phonenumber.PhoneNumber p = phoneUtil.parse(phoneNumber, this.region);
+//            this.phoneNumber = phoneUtil.format(p, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
+//        }
+//        catch(Exception e){
+//            throw new Exception("Sorry invalid phonenumber :(");
+//        }
+//    }
 
     public String getRegion() {
         return region;
