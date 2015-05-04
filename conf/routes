@@ -15,7 +15,6 @@ POST        /shout                 controllers.ShoutController.add()
 POST        /shout/membership/status    controllers.ShoutController.updateMemberStatus()
 
 # User routes
-POST        /users/search          controllers.UserController.search()
 GET         /                      controllers.UserController.online()
 
 # Friendship routes
@@ -23,6 +22,7 @@ GET         /friendships           controllers.FriendshipController.getList(id: 
 PUT         /friend                controllers.FriendshipController.add()
 POST        /friend/accept         controllers.FriendshipController.accept()
 POST        /friend/decline        controllers.FriendshipController.decline()
+POST        /friend/search         controllers.FriendshipController.search()
 
 # Test
 GET         /test/mail              controllers.TestController.mail()

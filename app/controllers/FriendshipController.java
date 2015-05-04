@@ -2,6 +2,7 @@ package controllers;
 
 import classes.FriendshipAddRequest;
 import classes.FriendshipTransition;
+import classes.SearchQuery;
 import com.avaje.ebean.Expr;
 import support.notification.AWSNotification;
 import support.notification.AWSNotificationService;
@@ -31,6 +32,13 @@ public class FriendshipController extends Controller {
         FriendshipAddRequest r = fromJson(request().body().asJson(), FriendshipAddRequest.class);
         User me = (User) Http.Context.current().args.get("userObject");
         User them = User.find.byId(r.getUserId());
+
+        //Find out if we are already friends
+        for(Friendship f: me.getFriendships()){
+            if(f.getFriend().equals(them)){
+                return badRequest("You guys are already friends.");
+            }
+        }
 
         if(me.getId().equals(them.getId())){
             return badRequest("You cannot be friends with yourself.");
@@ -147,6 +155,24 @@ public class FriendshipController extends Controller {
         f.save();
         peer.save();
         return ok();
+    }
+
+    @Security.Authenticated(AuthenticateCookie.class)
+    public static Result search(){
+
+        SearchQuery query = fromJson(request().body().asJson(), SearchQuery.class);
+        User me = (User) Http.Context.current().args.get("userObject");
+        String searchString = "%" + query.queryString + "%";
+        List users = User.find.where().ilike("email", searchString).not(Expr.eq("id", me.getId())).findPagingList(10).getAsList();
+
+        for(Friendship f: me.getFriendships()){
+            if(users.contains(f.getFriend())){
+                users.remove(f.getFriend());
+            }
+        }
+
+        return ok(toJson(users));
+
     }
 
 }
