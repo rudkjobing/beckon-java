@@ -45,6 +45,7 @@ public class User extends Model {
     @JsonIgnore
     private String hash;
     @JsonIgnore
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     /**
