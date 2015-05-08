@@ -91,7 +91,7 @@ public class FriendshipController extends Controller {
                                     ),
                                     Expr.eq("status", Friendship.Status.PENDING)
                             )
-                    ).orderBy("firstName").findList();
+                    ).orderBy("friend.firstName").findList();
         }
         else{
             friends = Friendship.find.where()
@@ -99,7 +99,7 @@ public class FriendshipController extends Controller {
                             Expr.eq("owner", user)
                             ,
                             Expr.eq("status", Friendship.Status.ACCEPTED)
-                    ).orderBy("firstName").findList();
+                    ).orderBy("friend.firstName").findList();
         }
 
         return ok(toJson(friends));
