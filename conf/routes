@@ -18,7 +18,7 @@ POST        /shout/membership/status    controllers.ShoutController.updateMember
 GET         /                      controllers.UserController.online()
 
 # Friendship routes
-GET         /friendships           controllers.FriendshipController.getList(id: Long, status ?= null)
+GET         /friendships           controllers.FriendshipController.getList(status ?= null)
 PUT         /friend                controllers.FriendshipController.add()
 POST        /friend/accept         controllers.FriendshipController.accept()
 POST        /friend/decline        controllers.FriendshipController.decline()

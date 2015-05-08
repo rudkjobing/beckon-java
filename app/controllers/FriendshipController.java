@@ -76,16 +76,14 @@ public class FriendshipController extends Controller {
     }
 
     @Security.Authenticated(AuthenticateCookie.class)
-    public static Result getList(Long id, String status){
+    public static Result getList(String status){
 
         User user = (User) Http.Context.current().args.get("userObject");
         List<Friendship> friends;
         if(status == null){
             friends = Friendship.find.where()
                     .and(
-                            Expr.and(
-                                    Expr.eq("owner", user),
-                                    Expr.gt("id", id))
+                            Expr.eq("owner", user)
                             ,
                             Expr.or(
                                     Expr.or(
@@ -93,23 +91,15 @@ public class FriendshipController extends Controller {
                                     ),
                                     Expr.eq("status", Friendship.Status.PENDING)
                             )
-                    ).orderBy("nickname").findList();
+                    ).orderBy("firstName").findList();
         }
         else{
             friends = Friendship.find.where()
                     .and(
-                            Expr.and(
-                                    Expr.eq("owner", user),
-                                    Expr.gt("id", id)
-                            )
+                            Expr.eq("owner", user)
                             ,
                             Expr.eq("status", Friendship.Status.ACCEPTED)
-                    ).orderBy("nickname").findList();
-        }
-
-
-        if(friends.size() == 0 && id != 0L){
-            return status(304, "Not modified");
+                    ).orderBy("firstName").findList();
         }
 
         return ok(toJson(friends));
