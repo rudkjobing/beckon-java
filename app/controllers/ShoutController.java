@@ -16,6 +16,7 @@ import support.notification.AWSNotificationService;
 import support.notification.Notification;
 import support.security.AuthenticateCookie;
 
+import java.security.acl.NotOwnerException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -39,10 +40,30 @@ public class ShoutController extends Controller{
         if(member.getUser().equals(user)){
             member.setStatus(transition.status);
             member.save();
-            AWSNotificationService service = new AWSNotificationService();
-            if(transition.status.equals(ShoutMembership.Status.ACCEPTED)){
 
+            /*Alert the other members*/
+            Shout shout = member.getShout();
+            AWSNotificationService service = new AWSNotificationService();
+            for(ShoutMembership s: shout.getMembers()){
+                if(s.getUser().equals(user)){
+                    continue;
+                }
+                Notification notification = new AWSNotification()
+                        .setEndpoints(s.getUser().getDevices());
+                if(transition.status.equals(ShoutMembership.Status.ACCEPTED)){
+                    notification.setMessage(user.getFirstName() + " is attending " + shout.getTitle());
+                }
+                else if(transition.status.equals(ShoutMembership.Status.DECLINED)){
+                    notification.setMessage(user.getFirstName() + " wont attend " + shout.getTitle());
+                }
+                else if(transition.status.equals(ShoutMembership.Status.MAYBE)){
+                    notification.setMessage(user.getFirstName() + " might attend " + shout.getTitle());
+                }
+                service.addNotification(notification);
             }
+
+            service.publish();
+
             return ok(toJson(member));
         }
 

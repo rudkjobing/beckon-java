@@ -70,6 +70,8 @@ public class FriendshipController extends Controller {
                 .setEndpoints(them.getDevices())
                 .setMessage(me.getFirstName() + " " + me.getLastName() + " wants to be friends with you!");
 
+        service.addNotification(notification);
+
         service.publish();
 
         return ok();
@@ -129,6 +131,8 @@ public class FriendshipController extends Controller {
         Notification notification = new AWSNotification()
                 .setEndpoints(peer.getOwner().getDevices())
                 .setMessage(user.getFirstName() + " " + user.getLastName() + " has accepted your friend request!");
+
+        service.addNotification(notification);
 
         service.publish();
 
