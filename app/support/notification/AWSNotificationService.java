@@ -66,7 +66,7 @@ public class AWSNotificationService implements NotificationService{
             apns.put("aps", aps);
 
             message.put("APNS", apns);
-            message.put("default", "");
+            message.put("default", notification.getMessage());
 
             for(Device d : notification.getEndpoints()){
                 PublishRequest p = new PublishRequest();
