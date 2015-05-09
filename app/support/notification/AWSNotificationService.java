@@ -54,17 +54,24 @@ public class AWSNotificationService implements NotificationService{
     @Override
     public void publish() {
         for(Notification notification : this.notifications){
+
             ObjectNode message = Json.newObject();
             ObjectNode apns = Json.newObject();
             ObjectNode aps = Json.newObject();
+
             aps.put("alert", notification.getMessage());
             aps.put("sound", "default");
             aps.put("badge", notification.getBadge());
+
             apns.put("aps", aps);
+
             message.put("APNS", apns);
+            message.put("default", "");
+
             for(Device d : notification.getEndpoints()){
                 PublishRequest p = new PublishRequest();
                 p.setMessageStructure("json");
+
                 p.setTargetArn(d.getArn());
                 p.setMessage(message.toString());
                 this.service.publish(p);
