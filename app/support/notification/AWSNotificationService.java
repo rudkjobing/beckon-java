@@ -64,6 +64,7 @@ public class AWSNotificationService implements NotificationService{
             message.put("APNS", apns);
             for(Device d : notification.getEndpoints()){
                 PublishRequest p = new PublishRequest();
+                p.setMessageStructure("json");
                 p.setTargetArn(d.getArn());
                 p.setMessage(message.toString());
                 this.service.publish(p);
