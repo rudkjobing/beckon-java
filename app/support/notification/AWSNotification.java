@@ -13,6 +13,7 @@ public class AWSNotification implements Notification {
     private String message = "";
     private List<Device> endpoints = new ArrayList<Device>();
     private boolean published = false;
+    private int badge = 0;
 
     @Override
     public Notification setMessage(String message) {
@@ -44,5 +45,16 @@ public class AWSNotification implements Notification {
     @Override
     public void setPublished(boolean published) {
         this.published = published;
+    }
+
+    @Override
+    public Notification setBadge(int badge) {
+        this.badge = badge;
+        return this;
+    }
+
+    @Override
+    public int getBadge() {
+        return this.badge;
     }
 }

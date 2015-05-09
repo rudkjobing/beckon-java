@@ -14,6 +14,7 @@ import play.mvc.*;
 import support.mail.AWSMail;
 import support.mail.AWSMailService;
 import support.mail.Mail;
+import support.misc.BroUtil;
 import support.notification.AWSNotificationService;
 import support.security.AuthenticateCookie;
 import support.security.AuthenticateToken;
@@ -21,7 +22,6 @@ import support.security.AuthenticateToken;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import static play.libs.Json.fromJson;
 import static play.libs.Json.toJson;
@@ -176,22 +176,10 @@ public class AccountController extends Controller{
     public static Result getBadge(){
         User user = (User) Http.Context.current().args.get("userObject");
 
-        int pendingFriendShips = Friendship.find.where()
-                .and(
-                        Expr.eq("owner", user),
-                        Expr.eq("status", Friendship.Status.PENDING)
-                ).findRowCount();
-
-        int pendingShouts = ShoutMembership.find.where()
-                .and(
-                        Expr.eq("user", user),
-                        Expr.eq("status", ShoutMembership.Status.INVITED)
-                ).findRowCount();
-
         ObjectNode result = Json.newObject();
-        result.put("badge", pendingFriendShips + pendingShouts);
+        result.put("badge", BroUtil.getPendingFriendships(user) + BroUtil.getPendingShouts(user));
 
-        return ok(toJson(result));
+        return ok(result);
 
     }
 

@@ -6,9 +6,11 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.*;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import models.Device;
+import play.libs.Json;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,16 +53,22 @@ public class AWSNotificationService implements NotificationService{
 
     @Override
     public void publish() {
-
         for(Notification notification : this.notifications){
+            ObjectNode message = Json.newObject();
+            ObjectNode apns = Json.newObject();
+            ObjectNode aps = Json.newObject();
+            aps.put("alert", notification.getMessage());
+            aps.put("sound", "default");
+            aps.put("badge", notification.getBadge());
+            apns.put("aps", aps);
+            message.put("APNS", apns);
             for(Device d : notification.getEndpoints()){
                 PublishRequest p = new PublishRequest();
                 p.setTargetArn(d.getArn());
-                p.setMessage(notification.getMessage());
+                p.setMessage(message.toString());
                 this.service.publish(p);
             }
         }
-
     }
 
     public CreatePlatformEndpointResult createEndpoint(String uuid){

@@ -11,6 +11,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.*;
+import support.misc.BroUtil;
 import support.notification.AWSNotification;
 import support.notification.AWSNotificationService;
 import support.notification.Notification;
@@ -48,7 +49,8 @@ public class ShoutController extends Controller{
                     continue;
                 }
                 Notification notification = new AWSNotification()
-                        .setEndpoints(s.getUser().getDevices());
+                        .setEndpoints(s.getUser().getDevices())
+                        .setBadge(BroUtil.getPendingFriendships(member.getUser()) + BroUtil.getPendingShouts(member.getUser()));
                 if(transition.status.equals(ShoutMembership.Status.ACCEPTED)){
                     notification.setMessage(user.getFirstName() + " is attending " + shout.getTitle());
                 }
@@ -152,7 +154,8 @@ public class ShoutController extends Controller{
 
             Notification notification = new AWSNotification()
                     .setEndpoints(friend.getFriend().getDevices())
-                    .setMessage(user.getFirstName() + " " + user.getLastName() + " has invited you to " + newShout.getTitle());
+                    .setMessage(user.getFirstName() + " " + user.getLastName() + " has invited you to " + newShout.getTitle())
+                    .setBadge(BroUtil.getPendingFriendships(member.getUser()) + BroUtil.getPendingShouts(member.getUser()));
 
             service.addNotification(notification);
 

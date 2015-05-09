@@ -14,6 +14,8 @@ public interface Notification {
     public String getMessage();
     public List<Device> getEndpoints();
     public void setPublished(boolean published);
+    public Notification setBadge(int badge);
+    public int getBadge();
     public boolean isPublished();
 
 }
