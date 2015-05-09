@@ -126,6 +126,11 @@ public class ShoutController extends Controller{
         }
 
         newShout.setTitle(shoutRequest.title);
+
+        if (shoutRequest.location.name == null){
+            shoutRequest.location.name = "";
+        }
+
         newShout.setLocation(shoutRequest.location);
 
         ShoutMembership member = new ShoutMembership();
