@@ -172,4 +172,27 @@ public class AccountController extends Controller{
 
     }
 
+    @Security.Authenticated(AuthenticateCookie.class)
+    public static Result getBadge(){
+        User user = (User) Http.Context.current().args.get("userObject");
+
+        int pendingFriendShips = Friendship.find.where()
+                .and(
+                        Expr.eq("owner", user),
+                        Expr.eq("status", Friendship.Status.PENDING)
+                ).findRowCount();
+
+        int pendingShouts = ShoutMembership.find.where()
+                .and(
+                        Expr.eq("user", user),
+                        Expr.eq("status", ShoutMembership.Status.INVITED)
+                ).findRowCount();
+
+        ObjectNode result = Json.newObject();
+        result.put("badge", pendingFriendShips + pendingShouts);
+
+        return ok(toJson(result));
+
+    }
+
 }

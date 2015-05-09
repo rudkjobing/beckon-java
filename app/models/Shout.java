@@ -58,4 +58,9 @@ public class Shout extends Model{
     public void setBegins(Date begins) {
         this.begins = begins;
     }
+
+    public static Finder<Long,Shout> find = new Finder<Long,Shout>(
+            Long.class, Shout.class
+    );
+
 }

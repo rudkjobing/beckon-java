@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ShoutList {
 
-    public ArrayList<ShoutResultObject> beckons = new ArrayList<ShoutResultObject>();
+    public ArrayList<ShoutResultObject> shouts = new ArrayList<ShoutResultObject>();
 
     public void addShout(ShoutMembership membership){
 
@@ -36,7 +36,7 @@ public class ShoutList {
             );
         }
 
-        this.beckons.add(resultObject);
+        this.shouts.add(resultObject);
 
     }
 

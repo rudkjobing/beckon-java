@@ -16,7 +16,6 @@ import support.notification.AWSNotificationService;
 import support.notification.Notification;
 import support.security.AuthenticateCookie;
 
-import java.security.acl.NotOwnerException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -86,7 +85,7 @@ public class ShoutController extends Controller{
         for(ShoutMembership m : shouts){
             b.addShout(m);
         }
-        return ok(toJson(b.beckons));
+        return ok(toJson(b.shouts));
 
     }
 
