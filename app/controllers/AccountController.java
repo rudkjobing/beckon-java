@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.*;
 import org.apache.commons.validator.routines.EmailValidator;
 import play.Logger;
-import play.data.validation.Constraints;
 import play.libs.Json;
 import play.mvc.*;
 import support.mail.AWSMail;
@@ -16,7 +15,6 @@ import support.mail.Mail;
 import support.misc.BroUtil;
 import support.notification.AWSNotificationService;
 import support.security.AuthenticateCookie;
-import support.security.AuthenticateToken;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,7 +78,7 @@ public class AccountController extends Controller{
     }
 
     public static Result requestPIN(){
-        PINRequest request = fromJson(request().body().asJson(), PINRequest.class);
+        NewPINRequest request = fromJson(request().body().asJson(), NewPINRequest.class);
         ObjectNode result = Json.newObject();
         if(!EmailValidator.getInstance().isValid(request.email)){
             result.put("success", false);
