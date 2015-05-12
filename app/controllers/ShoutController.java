@@ -103,7 +103,7 @@ public class ShoutController extends Controller{
         if(shoutRequest.title.equals("")){
 
             result.put("success", false);
-            result.put("message", "Title must not be empty");
+            result.put("message", "Title can not be empty");
             return badRequest(result);
         }
 
@@ -125,10 +125,13 @@ public class ShoutController extends Controller{
             return badRequest(result);
         }
 
-        newShout.setTitle(shoutRequest.title);
+        newShout.setTitle(shoutRequest.title.trim());
 
         if (shoutRequest.location.name == null){
             shoutRequest.location.name = "";
+        }
+        else{
+            shoutRequest.location.name = shoutRequest.location.name.trim();
         }
 
         newShout.setLocation(shoutRequest.location);

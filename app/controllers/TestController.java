@@ -51,9 +51,9 @@ public class TestController extends Controller {
         );
     }
 
-    public static Result createEndpoint(){
+    public static Result test(){
 
-        return ok();
+        return ok(views.html.mail.welcome_html.render("Steffen", String.valueOf((int)(Math.random()*9000)+1000)));
     }
 
 }

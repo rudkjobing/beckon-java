@@ -1,14 +1,13 @@
 package controllers;
 
-import classes.DeviceRegisterRequest;
-import classes.Password;
-import classes.SignInRequest;
-import classes.SignUpRequest;
+import classes.*;
 import com.amazonaws.services.sns.model.CreatePlatformEndpointResult;
 import com.avaje.ebean.Expr;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.*;
+import org.apache.commons.validator.routines.EmailValidator;
 import play.Logger;
+import play.data.validation.Constraints;
 import play.libs.Json;
 import play.mvc.*;
 import support.mail.AWSMail;
@@ -34,19 +33,33 @@ public class AccountController extends Controller{
     public static Result signIn(){
         /* Get the request body and deserialize it */
         SignInRequest request = fromJson(request().body().asJson(), SignInRequest.class);
-        User user = User.find.where().eq("email", request.email.toLowerCase()).findUnique();
         ObjectNode result = Json.newObject();
+
+        if(!EmailValidator.getInstance().isValid(request.email)){
+            result.put("success", false);
+            result.put("message", "Invalid email address.");
+            return badRequest(result);
+        }
+
+        User user = User.find.where().eq("email", request.email.toLowerCase()).findUnique();
+
+        if(user == null){
+            result.put("success", false);
+            result.put("message", "Invalid email address.");
+            return badRequest(result);
+        }
 
         /* Check that the supplied password matches the hash from the user object */
         try{
-            if(user.getStatus() == User.Status.INACTIVE){
-                throw new Exception("You must verify your email before logging in.");
+            if(request.getPassword().equals("") || user.getHash().equals("")){
+                throw new Exception("Need a PIN code? just press Request PIN");
             }
             else if(user.getStatus() == User.Status.BANNED){
                 throw new Exception("Sorry, you have been banned.");
             }
 
             Password.check(request.password, user.getHash());
+            user.setStatus(User.Status.ACTIVE);
             result.put("success", true);
 
         }
@@ -61,7 +74,21 @@ public class AccountController extends Controller{
         Session s = new Session(user);
         response().setCookie("uuid", s.getUuid(), 60 * 60 * 24 * 30);
         s.save();
+        user.setHash("");
+        user.save();
         return ok(result);
+    }
+
+    public static Result requestPIN(){
+        PINRequest request = fromJson(request().body().asJson(), PINRequest.class);
+        ObjectNode result = Json.newObject();
+        if(!EmailValidator.getInstance().isValid(request.email)){
+            result.put("success", false);
+            result.put("message", "Invalid email address.");
+            return badRequest(result);
+        }
+        User user = User.find.where().eq("email", request.email.toLowerCase()).findUnique();
+        return ok();
     }
 
     public static Result signUp(){
@@ -77,10 +104,12 @@ public class AccountController extends Controller{
                 throw new Exception("Please enter first and last name");
             }
 
-            newUser.setEmail(request.email.toLowerCase());
-            newUser.setFirstName(request.firstName);
-            newUser.setLastName(request.lastName);
-            newUser.setHash(Password.getSaltedHash(request.password));
+            String pinCode = String.valueOf(String.valueOf((int) (Math.random() * 9000) + 1000));
+
+            newUser.setEmail(request.email.toLowerCase().trim());
+            newUser.setFirstName(request.firstName.trim());
+            newUser.setLastName(request.lastName.trim());
+            newUser.setHash(Password.getSaltedHash(pinCode));
             newUser.setStatus(User.Status.INACTIVE);
 
             Session emailSession = new Session(newUser);
@@ -91,8 +120,8 @@ public class AccountController extends Controller{
             welcomeMail.setFrom("steffen@broshout.net");
             welcomeMail.setTo(to);
             welcomeMail.setSubject("Welcome!");
-            welcomeMail.setHtmlBody(views.html.mail.welcome_html.render(newUser.getFirstName(), "http://api.broshout.net:9000/verify?token=" + emailSession.getUuid()).body());
-            welcomeMail.setTextBody(views.html.mail.welcome_text.render(newUser.getFirstName(), "http://api.broshout.net:9000/verify?token=" + emailSession.getUuid()).body());
+            welcomeMail.setHtmlBody(views.html.mail.welcome_html.render(newUser.getFirstName(), pinCode).body());
+            welcomeMail.setTextBody(views.html.mail.welcome_text.render(newUser.getFirstName(), pinCode).body());
 
             AWSMailService service = new AWSMailService();
             service.sendMail(welcomeMail);
@@ -162,18 +191,9 @@ public class AccountController extends Controller{
 
     }
 
-    @Security.Authenticated(AuthenticateToken.class)
-    public static Result verifyEmail(){
-
-        User user = (User) Http.Context.current().args.get("userObject");
-        user.setStatus(User.Status.ACTIVE);
-        user.save();
-        return ok(views.html.web.verify_email.render(user.getFirstName()));
-
-    }
-
     @Security.Authenticated(AuthenticateCookie.class)
     public static Result getBadge(){
+
         User user = (User) Http.Context.current().args.get("userObject");
 
         ObjectNode result = Json.newObject();

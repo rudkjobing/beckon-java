@@ -68,12 +68,10 @@ create table user (
   first_name                varchar(255),
   last_name                 varchar(255),
   region                    varchar(255),
-  phone_number              varchar(255),
   email                     varchar(255),
   hash                      varchar(255),
-  status                    integer,
-  constraint ck_user_status check (status in (0,1,2)),
-  constraint uq_user_phone_number unique (phone_number),
+  status                    varchar(8),
+  constraint ck_user_status check (status in ('INACTIVE','ACTIVE','BANNED')),
   constraint uq_user_email unique (email),
   constraint pk_user primary key (id))
 ;
