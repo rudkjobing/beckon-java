@@ -6,6 +6,7 @@ import com.avaje.ebean.Expr;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.*;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.hibernate.validator.constraints.Email;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.*;
@@ -98,6 +99,9 @@ public class AccountController extends Controller{
         User newUser = new User();
 
         try {
+            if(!EmailValidator.getInstance().isValid(request.getEmail())){
+                throw new Exception("Please enter a valid email");
+            }
             if(request.firstName.equals("") || request.lastName.equals("")){
                 throw new Exception("Please enter first and last name");
             }
