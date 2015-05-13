@@ -81,13 +81,49 @@ public class AccountController extends Controller{
     public static Result requestPIN(){
         NewPINRequest request = fromJson(request().body().asJson(), NewPINRequest.class);
         ObjectNode result = Json.newObject();
+
         if(!EmailValidator.getInstance().isValid(request.email)){
             result.put("success", false);
             result.put("message", "Invalid email address.");
             return badRequest(result);
         }
+
         User user = User.find.where().eq("email", request.email.toLowerCase()).findUnique();
-        return ok();
+
+        if(user == null){
+            result.put("success", false);
+            result.put("message", "Invalid email address.");
+            return badRequest(result);
+        }
+
+        String pinCode = String.valueOf(String.valueOf((int) (Math.random() * 9000) + 1000));
+        try{
+
+            user.setHash(Password.getSaltedHash(pinCode));
+            user.save();
+
+            Mail pinMail = new AWSMail();
+            List<String> to = new ArrayList<>();
+            to.add("steffen@beckon.dk");
+            pinMail.setFrom("steffen@broshout.net");
+            pinMail.setTo(to);
+            pinMail.setSubject("Welcome!");
+            pinMail.setHtmlBody(views.html.mail.request_pin_html.render(pinCode).body());
+            pinMail.setTextBody(views.html.mail.request_pin_html.render(pinCode).body());
+
+            AWSMailService service = new AWSMailService();
+            service.sendMail(pinMail);
+
+            result.put("success", true);
+            result.put("message", "PIN has been email to you.");
+            return ok(result);
+
+        }
+        catch (Exception e){
+            result.put("success", false);
+            result.put("message", "Unknown error.");
+            return internalServerError(result);
+        }
     }
 
     public static Result signUp(){
