@@ -78,7 +78,7 @@ public class AccountController extends Controller{
         return ok(result);
     }
 
-    public static Result requestPIN(){
+    public static Result requestPin(){
         NewPINRequest request = fromJson(request().body().asJson(), NewPINRequest.class);
         ObjectNode result = Json.newObject();
 
