@@ -107,7 +107,7 @@ public class AccountController extends Controller{
             to.add("steffen@beckon.dk");
             pinMail.setFrom("steffen@broshout.net");
             pinMail.setTo(to);
-            pinMail.setSubject("Welcome!");
+            pinMail.setSubject("One time PIN");
             pinMail.setHtmlBody(views.html.mail.request_pin_html.render(pinCode).body());
             pinMail.setTextBody(views.html.mail.request_pin_html.render(pinCode).body());
 
