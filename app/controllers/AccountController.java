@@ -104,8 +104,8 @@ public class AccountController extends Controller{
 
             Mail pinMail = new AWSMail();
             List<String> to = new ArrayList<>();
-            to.add("steffen@beckon.dk");
-            pinMail.setFrom("steffen@broshout.net");
+            to.add(user.getEmail());
+            pinMail.setFrom("bot@broshout.net");
             pinMail.setTo(to);
             pinMail.setSubject("One time PIN");
             pinMail.setHtmlBody(views.html.mail.request_pin_html.render(pinCode).body());
@@ -153,9 +153,9 @@ public class AccountController extends Controller{
             Session emailSession = new Session(newUser);
 
             Mail welcomeMail = new AWSMail();
-            List<String> to = new ArrayList<String>();
-            to.add("steffen@beckon.dk");
-            welcomeMail.setFrom("steffen@broshout.net");
+            List<String> to = new ArrayList<>();
+            to.add(newUser.getEmail());
+            welcomeMail.setFrom("bot@broshout.net");
             welcomeMail.setTo(to);
             welcomeMail.setSubject("Welcome!");
             welcomeMail.setHtmlBody(views.html.mail.welcome_html.render(newUser.getFirstName(), pinCode).body());
