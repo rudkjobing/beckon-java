@@ -70,7 +70,7 @@ public class FriendshipController extends Controller {
         Notification notification = new AWSNotification()
                 .setEndpoints(them.getDevices())
                 .setMessage(me.getFirstName() + " " + me.getLastName() + " wants to be friends with you!")
-                .setBadge(BroUtil.getPendingFriendships(me) + BroUtil.getPendingShouts(me));
+                .setBadge(BroUtil.getPendingFriendships(them) + BroUtil.getPendingShouts(them));
 
         service.addNotification(notification);
 
@@ -133,7 +133,7 @@ public class FriendshipController extends Controller {
         Notification notification = new AWSNotification()
                 .setEndpoints(peer.getOwner().getDevices())
                 .setMessage(user.getFirstName() + " " + user.getLastName() + " has accepted your friend request!")
-                .setBadge(BroUtil.getPendingFriendships(user) + BroUtil.getPendingShouts(user));
+                .setBadge(BroUtil.getPendingFriendships(peer.getOwner()) + BroUtil.getPendingShouts(peer.getOwner()));
 
         service.addNotification(notification);
 

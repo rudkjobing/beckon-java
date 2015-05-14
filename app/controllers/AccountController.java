@@ -96,6 +96,12 @@ public class AccountController extends Controller{
             return badRequest(result);
         }
 
+        if(!user.getHash().equals("")){
+            result.put("success", false);
+            result.put("message", "You already have an unused Pin.");
+            return badRequest(result);
+        }
+
         String pinCode = String.valueOf(String.valueOf((int) (Math.random() * 9000) + 1000));
         try{
 
