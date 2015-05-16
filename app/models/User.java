@@ -31,7 +31,7 @@ public class User extends Model {
     private String region = "DK";
 //    @Column(unique=true)
 //    private String phoneNumber;
-    @Column(unique=true)
+    @Column(unique=true,length = 191)
     private String email;
     @OneToMany(mappedBy = "owner",cascade=CascadeType.ALL)
     @JsonIgnore

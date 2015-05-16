@@ -165,6 +165,7 @@ public class ShoutController extends Controller{
                     .setMessage(user.getFirstName() + " " + user.getLastName() + " has invited you to " + newShout.getTitle())
                     .setBadge(BroUtil.getPendingFriendships(member.getUser()) + BroUtil.getPendingShouts(member.getUser()));
 
+            
             service.addNotification(notification);
 
         }
