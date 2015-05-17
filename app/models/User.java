@@ -16,6 +16,7 @@ import java.util.List;
  */
 
 @Entity
+@Table(name = "bro_user")
 public class User extends Model {
 
     /**

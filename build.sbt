@@ -10,9 +10,9 @@ libraryDependencies ++= Seq(
   javaJdbc,
   cache,
   javaWs,
-  "mysql" % "mysql-connector-java" % "5.1.34",
   "com.amazonaws" % "aws-java-sdk" % "1.9.17",
   "commons-validator" % "commons-validator" % "1.4.0",
+  "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
   javaEbean
 )
 
