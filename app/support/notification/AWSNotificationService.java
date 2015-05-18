@@ -65,8 +65,8 @@ public class AWSNotificationService implements NotificationService{
 
             apns.put("aps", aps);
 
-            message.put("APNS", apns);
             message.put("default", notification.getMessage());
+            message.put("APNS", apns);
 
             for(Device d : notification.getEndpoints()){
                 PublishRequest p = new PublishRequest();
@@ -74,7 +74,15 @@ public class AWSNotificationService implements NotificationService{
 
                 p.setTargetArn(d.getArn());
                 p.setMessage(message.toString());
-                this.service.publish(p);
+                try {
+                    this.service.publish(p);
+                }
+                catch(NotFoundException e){
+                    // Endpoint has been disabled, must clean up the device
+                    DeleteEndpointRequest deleteEndpointRequest = new DeleteEndpointRequest().withEndpointArn(d.getArn());
+                    service.deleteEndpoint(deleteEndpointRequest);
+                    d.delete();
+                }
             }
         }
     }
