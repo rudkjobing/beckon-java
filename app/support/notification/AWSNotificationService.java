@@ -77,7 +77,7 @@ public class AWSNotificationService implements NotificationService{
                 try {
                     this.service.publish(p);
                 }
-                catch(NotFoundException e){
+                catch(EndpointDisabledException e){
                     // Endpoint has been disabled, must clean up the device
                     DeleteEndpointRequest deleteEndpointRequest = new DeleteEndpointRequest().withEndpointArn(d.getArn());
                     service.deleteEndpoint(deleteEndpointRequest);
