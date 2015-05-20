@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import models.Device;
+import org.apache.commons.lang3.StringEscapeUtils;
 import play.Logger;
 import play.libs.Json;
 
@@ -59,14 +60,12 @@ public class AWSNotificationService implements NotificationService{
             ObjectNode message = Json.newObject();
             ObjectNode apns = Json.newObject();
             ObjectNode aps = Json.newObject();
-
             aps.put("alert", notification.getMessage());
-            aps.put("badge", Integer.toString(notification.getBadge()));
+            aps.put("badge", notification.getBadge());
             aps.put("sound", "default");
-
+            //aps.put("default", notification.getMessage());
             apns.put("aps", aps);
 
-            message.put("default", notification.getMessage());
             message.put("APNS", apns);
 
             Logger.error(message.toString());
