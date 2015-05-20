@@ -60,8 +60,8 @@ public class AWSNotificationService implements NotificationService{
             ObjectNode aps = Json.newObject();
 
             aps.put("alert", notification.getMessage());
+            aps.put("badge", 6);
             aps.put("sound", "default");
-            aps.put("badge", notification.getBadge());
 
             apns.put("aps", aps);
 
