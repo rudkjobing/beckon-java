@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import models.Device;
+import play.Logger;
 import play.libs.Json;
 
 import java.util.ArrayList;
@@ -67,6 +68,8 @@ public class AWSNotificationService implements NotificationService{
 
             message.put("default", notification.getMessage());
             message.put("APNS", apns);
+
+            Logger.error(message.toString());
 
             for(Device d : notification.getEndpoints()){
                 PublishRequest p = new PublishRequest();
