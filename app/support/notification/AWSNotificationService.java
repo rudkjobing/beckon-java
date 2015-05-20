@@ -66,7 +66,7 @@ public class AWSNotificationService implements NotificationService{
             //aps.put("default", notification.getMessage());
             apns.put("aps", aps);
 
-            message.put("APNS", apns);
+            message.put("APNS", apns.toString());
 
             Logger.error(message.toString());
 
