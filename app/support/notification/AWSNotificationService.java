@@ -6,14 +6,9 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.*;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import models.Device;
-import org.apache.commons.lang3.StringEscapeUtils;
-import play.Logger;
-import play.libs.Json;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,22 +20,18 @@ public class AWSNotificationService implements NotificationService{
 
     AmazonSNSClient service;
     String arn;
-    String message;
-    List<Device> endpoints;
     List<Notification> notifications = new ArrayList<>();
 
     public AWSNotificationService(){
-
-        Config c = ConfigFactory.load();
+        Config config = ConfigFactory.load();
         AWSCredentials credentials = new BasicAWSCredentials(
-                c.getString("aws.default.accesKey"),
-                c.getString("aws.default.secretKey")
+                config.getString("aws.default.accesKey"),
+                config.getString("aws.default.secretKey")
         );
-        this.arn = c.getString("aws.default.arn");
-        this.service = new AmazonSNSClient(credentials);
-        Region region = Region.getRegion(Regions.US_EAST_1);
-        this.service.setRegion(region);
 
+        this.arn = config.getString("aws.default.arn");
+        this.service = new AmazonSNSClient(credentials);
+        this.service.setRegion(Region.getRegion(Regions.US_EAST_1));
     }
 
     @Override
@@ -56,47 +47,32 @@ public class AWSNotificationService implements NotificationService{
     @Override
     public void publish() {
         for(Notification notification : this.notifications){
+            for(Device device : notification.getEndpoints()){
+                PublishRequest publishRequest = new PublishRequest();
+                publishRequest.setMessageStructure("json");
+                publishRequest.setTargetArn(device.getArn());
+                publishRequest.setMessage(notification.serializeMessage());
 
-            ObjectNode message = Json.newObject();
-            ObjectNode apns = Json.newObject();
-            ObjectNode aps = Json.newObject();
-            aps.put("alert", notification.getMessage());
-            aps.put("badge", notification.getBadge());
-            aps.put("sound", "default");
-            //aps.put("default", notification.getMessage());
-            apns.put("aps", aps);
-
-            message.put("APNS", apns.toString());
-
-            Logger.error(message.toString());
-
-            for(Device d : notification.getEndpoints()){
-                PublishRequest p = new PublishRequest();
-                p.setMessageStructure("json");
-
-                p.setTargetArn(d.getArn());
-                p.setMessage(message.toString());
                 try {
-                    this.service.publish(p);
+                    this.service.publish(publishRequest);
                 }
                 catch(EndpointDisabledException e){
                     // Endpoint has been disabled, must clean up the device
-                    DeleteEndpointRequest deleteEndpointRequest = new DeleteEndpointRequest().withEndpointArn(d.getArn());
+                    DeleteEndpointRequest deleteEndpointRequest = new DeleteEndpointRequest().withEndpointArn(device.getArn());
                     service.deleteEndpoint(deleteEndpointRequest);
-                    d.delete();
+                    device.delete();
                 }
             }
         }
     }
 
-    public CreatePlatformEndpointResult createEndpoint(String uuid){
-
+    @Override
+    public String createEndpoint(String uuid){
         CreatePlatformEndpointRequest p = new CreatePlatformEndpointRequest()
                 .withPlatformApplicationArn(this.arn)
                 .withToken(uuid);
 
-        return this.service.createPlatformEndpoint(p);
-
+        return this.service.createPlatformEndpoint(p).getEndpointArn();
     }
 
 }

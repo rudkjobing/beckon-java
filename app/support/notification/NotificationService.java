@@ -13,5 +13,6 @@ public interface NotificationService {
     public void addNotification(Notification notification);
     public void removeNotification(Notification notification);
     public void publish();
+    public String createEndpoint(String uuid);
 
 }

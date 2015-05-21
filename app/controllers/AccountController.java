@@ -115,7 +115,7 @@ public class AccountController extends Controller{
             pinMail.setTo(to);
             pinMail.setSubject("One time PIN");
             pinMail.setHtmlBody(views.html.mail.request_pin_html.render(pinCode).body());
-            pinMail.setTextBody(views.html.mail.request_pin_html.render(pinCode).body());
+            pinMail.setTextBody(views.html.mail.request_pin_text.render(pinCode).body());
 
             AWSMailService service = new AWSMailService();
             service.sendMail(pinMail);
@@ -210,9 +210,9 @@ public class AccountController extends Controller{
             device.setLastRegistered(new Date());
 
             AWSNotificationService service = new AWSNotificationService();
-            CreatePlatformEndpointResult arn = service.createEndpoint(device.getUuid());
+            String arn = service.createEndpoint(device.getUuid());
 
-            device.setArn(arn.getEndpointArn());
+            device.setArn(arn);
             device.save();
 
             return ok(toJson(device));

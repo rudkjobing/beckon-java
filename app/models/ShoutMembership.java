@@ -16,9 +16,9 @@ public class ShoutMembership extends Model{
 
     @Id
     public Long id;
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     public Shout shout;
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     public User user;
     @Enumerated(EnumType.STRING)
     public Status status;

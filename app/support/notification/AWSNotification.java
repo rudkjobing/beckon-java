@@ -1,19 +1,22 @@
 package support.notification;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.Device;
+import play.libs.Json;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Play on 22-04-2015.
+ * Created by Steffen Rudkjøbing on 22-04-2015.
+ * © 2014 Steffen Rudkjøbing
  */
 public class AWSNotification implements Notification {
 
-    private String message = "";
     private List<Device> endpoints = new ArrayList<Device>();
-    private boolean published = false;
+    private String message = "";
     private int badge = 0;
+    private String sound ="default";
 
     @Override
     public Notification setMessage(String message) {
@@ -38,16 +41,6 @@ public class AWSNotification implements Notification {
     }
 
     @Override
-    public boolean isPublished() {
-        return this.published;
-    }
-
-    @Override
-    public void setPublished(boolean published) {
-        this.published = published;
-    }
-
-    @Override
     public Notification setBadge(int badge) {
         this.badge = badge;
         return this;
@@ -56,5 +49,31 @@ public class AWSNotification implements Notification {
     @Override
     public int getBadge() {
         return this.badge;
+    }
+
+    @Override
+    public Notification setSound(String sound) {
+        this.sound = sound;
+        return this;
+    }
+
+    @Override
+    public String getSound() {
+        return this.sound;
+    }
+
+    @Override
+    public String serializeMessage() {
+        ObjectNode message = Json.newObject();
+        ObjectNode apns = Json.newObject();
+        ObjectNode aps = Json.newObject();
+
+        aps.put("alert", this.getMessage());
+        aps.put("badge", this.getBadge());
+        aps.put("sound", this.getSound());
+
+        apns.put("aps", aps);
+        message.put("APNS", apns.toString());
+        return message.toString();
     }
 }

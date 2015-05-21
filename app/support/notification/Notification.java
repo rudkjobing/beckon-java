@@ -5,7 +5,8 @@ import models.Device;
 import java.util.List;
 
 /**
- * Created by Play on 22-04-2015.
+ * Created by Steffen Rudkjøbing on 22-04-2015.
+ * © 2014 Steffen Rudkjøbing
  */
 public interface Notification {
 
@@ -13,9 +14,10 @@ public interface Notification {
     public Notification setEndpoints(List<Device> endpoints);
     public String getMessage();
     public List<Device> getEndpoints();
-    public void setPublished(boolean published);
     public Notification setBadge(int badge);
     public int getBadge();
-    public boolean isPublished();
+    public Notification setSound(String sound);
+    public String getSound();
+    public String serializeMessage();
 
 }

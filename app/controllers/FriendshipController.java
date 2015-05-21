@@ -112,7 +112,6 @@ public class FriendshipController extends Controller {
 
     @Security.Authenticated(AuthenticateCookie.class)
     public static Result delete(){
-
         User user = (User) Http.Context.current().args.get("userObject");
         return ok();
     }
