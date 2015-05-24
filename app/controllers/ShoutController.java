@@ -148,6 +148,7 @@ public class ShoutController extends Controller{
         }
 
         newShout.setLocation(shoutRequest.location);
+        newShout.save();
 
         ShoutMembership member = new ShoutMembership();
         member.setUser(user);
