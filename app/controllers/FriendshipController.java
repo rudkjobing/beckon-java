@@ -8,6 +8,7 @@ import support.misc.BroUtil;
 import support.notification.AWSNotification;
 import support.notification.AWSNotificationService;
 import support.notification.Notification;
+import support.notification.NotificationService;
 import support.security.AuthenticateCookie;
 import models.Friendship;
 import models.User;
@@ -16,6 +17,7 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Security;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static play.libs.Json.fromJson;
@@ -30,13 +32,13 @@ public class FriendshipController extends Controller {
     @Security.Authenticated(AuthenticateCookie.class)
     public static Result add(){
 
-        FriendshipAddRequest r = fromJson(request().body().asJson(), FriendshipAddRequest.class);
+        FriendshipAddRequest friendshipAddRequest = fromJson(request().body().asJson(), FriendshipAddRequest.class);
         User me = (User) Http.Context.current().args.get("userObject");
-        User them = User.find.byId(r.getUserId());
+        User them = User.find.byId(friendshipAddRequest.getUserId());
 
         //Find out if we are already friends
-        for(Friendship f: me.getFriendships()){
-            if(f.getFriend().equals(them)){
+        for(Friendship friendship: me.getFriendships()){
+            if(friendship.getFriend().equals(them)){
                 return badRequest("You guys are already friends.");
             }
         }
@@ -65,7 +67,7 @@ public class FriendshipController extends Controller {
         myFriendship.save();
         theirFriendship.save();
 
-        AWSNotificationService service = new AWSNotificationService();
+        NotificationService service = new AWSNotificationService();
 
         Notification notification = new AWSNotification()
                 .setEndpoints(them.getDevices())
@@ -87,8 +89,7 @@ public class FriendshipController extends Controller {
         if(status == null){
             friends = Friendship.find.where()
                     .and(
-                            Expr.eq("owner", user)
-                            ,
+                            Expr.eq("owner", user),
                             Expr.or(
                                     Expr.or(
                                             Expr.eq("status", Friendship.Status.INVITED), Expr.eq("status", Friendship.Status.ACCEPTED)
@@ -100,8 +101,7 @@ public class FriendshipController extends Controller {
         else{
             friends = Friendship.find.where()
                     .and(
-                            Expr.eq("owner", user)
-                            ,
+                            Expr.eq("owner", user),
                             Expr.eq("status", Friendship.Status.ACCEPTED)
                     ).orderBy("friend.firstName").findList();
         }
@@ -119,15 +119,23 @@ public class FriendshipController extends Controller {
     @Security.Authenticated(AuthenticateCookie.class)
     public static Result accept(){
         User user = (User) Http.Context.current().args.get("userObject");
-        FriendshipTransition ft = fromJson(request().body().asJson(), FriendshipTransition.class);
-        Friendship f = Friendship.find.byId(ft.id);
-        Friendship peer = f.getPeer();
-        f.setStatus(Friendship.Status.ACCEPTED);
+        
+        FriendshipTransition friendshipTransition = fromJson(request().body().asJson(), FriendshipTransition.class);
+
+        Friendship friendship = Friendship.find.byId(friendshipTransition.id);
+        if(!friendship.getOwner().equals(user)){
+            return badRequest();
+        }
+
+        Friendship peer = friendship.getPeer();
+        
+        friendship.setStatus(Friendship.Status.ACCEPTED);
         peer.setStatus(Friendship.Status.ACCEPTED);
-        f.save();
+        
+        friendship.save();
         peer.save();
 
-        AWSNotificationService service = new AWSNotificationService();
+        NotificationService service = new AWSNotificationService();
 
         Notification notification = new AWSNotification()
                 .setEndpoints(peer.getOwner().getDevices())
@@ -143,13 +151,21 @@ public class FriendshipController extends Controller {
 
     public static Result decline(){
         User user = (User) Http.Context.current().args.get("userObject");
-        FriendshipTransition ft = fromJson(request().body().asJson(), FriendshipTransition.class);
-        Friendship f = Friendship.find.byId(ft.id);
-        Friendship peer = f.getPeer();
-        f.setStatus(Friendship.Status.DECLINED);
+        FriendshipTransition friendshipTransition = fromJson(request().body().asJson(), FriendshipTransition.class);
+
+        Friendship friendship = Friendship.find.byId(friendshipTransition.id);
+        if(!friendship.getOwner().equals(user)){
+            return badRequest();
+        }
+
+        Friendship peer = friendship.getPeer();
+
+        friendship.setStatus(Friendship.Status.DECLINED);
         peer.setStatus(Friendship.Status.BLOCKED);
-        f.save();
+
+        friendship.save();
         peer.save();
+
         return ok();
     }
 

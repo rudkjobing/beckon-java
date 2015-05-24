@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Entity
 public class ShoutMembership extends Model{
 
-    public enum Status {INVITED, ACCEPTED, MAYBE, DECLINED};
+    public enum Status {INVITED, ACCEPTED, MAYBE, DECLINED, DELETED};
     public enum Role {CREATOR, MEMBER, ADMIN}
 
     @Id

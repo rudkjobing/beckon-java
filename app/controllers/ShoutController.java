@@ -15,6 +15,7 @@ import support.misc.BroUtil;
 import support.notification.AWSNotification;
 import support.notification.AWSNotificationService;
 import support.notification.Notification;
+import support.notification.NotificationService;
 import support.security.AuthenticateCookie;
 
 import java.text.SimpleDateFormat;
@@ -37,38 +38,46 @@ public class ShoutController extends Controller{
         ShoutMemberTransition transition = fromJson(request().body().asJson(), ShoutMemberTransition.class);
 
         ShoutMembership member = ShoutMembership.find.byId(transition.memberId);
-        if(member.getUser().equals(user)){
-            member.setStatus(transition.status);
-            member.save();
-
-            /*Alert the other members*/
-            Shout shout = member.getShout();
-            AWSNotificationService service = new AWSNotificationService();
-            for(ShoutMembership s: shout.getMembers()){
-                if(s.getUser().equals(user)){
-                    continue;
-                }
-                Notification notification = new AWSNotification()
-                        .setEndpoints(s.getUser().getDevices())
-                        .setBadge(BroUtil.getPendingFriendships(member.getUser()) + BroUtil.getPendingShouts(member.getUser()));
-                if(transition.status.equals(ShoutMembership.Status.ACCEPTED)){
-                    notification.setMessage(user.getFirstName() + " is attending " + shout.getTitle());
-                }
-                else if(transition.status.equals(ShoutMembership.Status.DECLINED)){
-                    notification.setMessage(user.getFirstName() + " wont attend " + shout.getTitle());
-                }
-                else if(transition.status.equals(ShoutMembership.Status.MAYBE)){
-                    notification.setMessage(user.getFirstName() + " might attend " + shout.getTitle());
-                }
-                service.addNotification(notification);
-            }
-
-            service.publish();
-
-            return ok(toJson(member));
+        if(!member.getUser().equals(user)) {
+            return badRequest();
         }
 
-        return badRequest();
+        member.setStatus(transition.status);
+        member.save();
+
+        /*Alert the other members*/
+        Shout shout = member.getShout();
+        NotificationService service = new AWSNotificationService();
+        boolean canDelete = true;
+        for(ShoutMembership s: shout.getMembers()){
+            if(s.status != ShoutMembership.Status.DELETED){
+                canDelete = false;
+            }
+            if(s.getUser().equals(user) || member.status.equals(ShoutMembership.Status.DELETED)){
+                continue;
+            }
+            Notification notification = new AWSNotification()
+                    .setEndpoints(s.getUser().getDevices())
+                    .setBadge(BroUtil.getPendingFriendships(member.getUser()) + BroUtil.getPendingShouts(member.getUser()));
+            if(transition.status.equals(ShoutMembership.Status.ACCEPTED)){
+                notification.setMessage(user.getFirstName() + " is attending " + shout.getTitle());
+            }
+            else if(transition.status.equals(ShoutMembership.Status.DECLINED)){
+                notification.setMessage(user.getFirstName() + " wont attend " + shout.getTitle());
+            }
+            else if(transition.status.equals(ShoutMembership.Status.MAYBE)){
+                notification.setMessage(user.getFirstName() + " might attend " + shout.getTitle());
+            }
+            service.addNotification(notification);
+        }
+        if(canDelete){
+            shout.delete();
+        }
+        else{
+            service.publish();
+        }
+
+        return ok(toJson(member));
 
     }
 
@@ -80,9 +89,15 @@ public class ShoutController extends Controller{
 
         Date nowMinusHours = DateUtils.addHours(new Date(), -2);
 
-        List<ShoutMembership> shouts = ShoutMembership.find.where().and(
-                Expr.eq("user", user), Expr.gt("shout.begins", nowMinusHours)
-        ).order().asc("shout.begins").findList();
+        List<ShoutMembership> shouts = ShoutMembership.find.where()
+                .and(
+                        Expr.eq("user", user),
+                        Expr.and(
+                                Expr.gt("shout.begins", nowMinusHours),
+                                Expr.ne("status", ShoutMembership.Status.DELETED)
+                        )
+                )
+                .order().asc("shout.begins").findList();
 
         for(ShoutMembership m : shouts){
             b.addShout(m);
@@ -101,7 +116,6 @@ public class ShoutController extends Controller{
         ObjectNode result = Json.newObject();
 
         if(shoutRequest.title.equals("")){
-
             result.put("success", false);
             result.put("message", "Title can not be empty");
             return badRequest(result);
@@ -112,14 +126,13 @@ public class ShoutController extends Controller{
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
         try {
-
             Date date = formatter.parse(shoutRequest.begins);
             if(date.before(DateUtils.addHours(new Date(), -2))){
                 throw new Exception("Date is too far in the past");
             }
             newShout.setBegins(date);
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             result.put("success", false);
             result.put("message", "Invalid date");
             return badRequest(result);
@@ -145,7 +158,7 @@ public class ShoutController extends Controller{
         user.getBeckons().add(member);
         member.save();
 
-        AWSNotificationService service = new AWSNotificationService();
+        NotificationService service = new AWSNotificationService();
 
         for(Friendship friend : shoutRequest.members) {
             friend.refresh();
@@ -173,6 +186,14 @@ public class ShoutController extends Controller{
         service.publish();
 
         newShout.save();
+
+        return ok();
+
+    }
+
+    public static Result getMembers(int shoutId){
+
+
 
         return ok();
 

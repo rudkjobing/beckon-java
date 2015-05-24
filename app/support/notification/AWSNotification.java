@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Steffen Rudkjøbing on 22-04-2015.
- * © 2014 Steffen Rudkjøbing
+ * Created by Steffen RudkjÃ¸bing on 22-04-2015.
+ * Â© 2014 Steffen RudkjÃ¸bing
  */
 public class AWSNotification implements Notification {
 

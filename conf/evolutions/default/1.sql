@@ -58,7 +58,7 @@ create table shout_membership (
   user_id                   bigint,
   status                    varchar(8),
   role                      varchar(7),
-  constraint ck_shout_membership_status check (status in ('INVITED','ACCEPTED','MAYBE','DECLINED')),
+  constraint ck_shout_membership_status check (status in ('INVITED','ACCEPTED','MAYBE','DECLINED','DELETED')),
   constraint ck_shout_membership_role check (role in ('CREATOR','MEMBER','ADMIN')),
   constraint pk_shout_membership primary key (id))
 ;
