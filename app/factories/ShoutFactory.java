@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by Steffen H. Rudkjøbing on 5/25/2015.
+ * Created by Steffen H. RudkjÃ¸bing on 5/25/2015.
  */
 public class ShoutFactory {
 
