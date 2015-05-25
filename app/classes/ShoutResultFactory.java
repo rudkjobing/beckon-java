@@ -14,19 +14,20 @@ public class ShoutResultFactory {
 
     public static ShoutResult getShoutResult(ShoutMembership membership){
 
-        ShoutResult resultObject = new ShoutResult();
+        ShoutResult result = new ShoutResult();
 
-        resultObject.status = membership.getStatus();
-        resultObject.begins = membership.getShout().getBegins();
-        resultObject.id = membership.getShout().id;
-        resultObject.memberId = membership.id;
-        resultObject.location = membership.getShout().getLocation();
-        resultObject.begins = membership.getShout().getBegins();
-        resultObject.title = membership.getShout().getTitle();
+        result.role = membership.getRole();
+        result.status = membership.getStatus();
+        result.begins = membership.getShout().getBegins();
+        result.id = membership.getShout().id;
+        result.memberId = membership.id;
+        result.location = membership.getShout().getLocation();
+        result.begins = membership.getShout().getBegins();
+        result.title = membership.getShout().getTitle();
 
-        resultObject.createMembers(membership.getShout());
+        result.createMembers(membership.getShout());
 
-        return resultObject;
+        return result;
 
     }
 

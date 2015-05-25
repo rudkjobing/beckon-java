@@ -14,6 +14,7 @@ import java.util.List;
 public class ShoutResult {
 
     public ShoutMembership.Status status;
+    public ShoutMembership.Role role;
     public Long id;
     public Long memberId;
     public String title;
