@@ -14,6 +14,7 @@ POST        /account/requestPin    controllers.AccountController.requestPin()
 GET         /shouts                controllers.ShoutController.getAll()
 POST        /shout                 controllers.ShoutController.add()
 POST        /shout/membership/status    controllers.ShoutController.updateMemberStatus()
+GET         /shout/:id             controllers.ShoutController.get(id: Long)
 
 # User routes
 GET         /                      controllers.UserController.online()
