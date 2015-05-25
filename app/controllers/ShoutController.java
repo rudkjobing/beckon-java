@@ -1,11 +1,13 @@
 package controllers;
 
 import classes.ShoutAddRequest;
-import classes.ShoutList;
+import classes.ShoutResult;
+import classes.ShoutResultFactory;
 import classes.ShoutMemberTransition;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.annotation.Transactional;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import factories.ShoutFactory;
 import models.*;
 import org.apache.commons.lang3.time.DateUtils;
 import play.Logger;
@@ -19,6 +21,7 @@ import support.notification.NotificationService;
 import support.security.AuthenticateCookie;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -85,7 +88,6 @@ public class ShoutController extends Controller{
     public static Result getAll(){
 
         User user = (User) Http.Context.current().args.get("userObject");
-        ShoutList b = new ShoutList();
 
         Date nowMinusHours = DateUtils.addHours(new Date(), -2);
 
@@ -99,10 +101,26 @@ public class ShoutController extends Controller{
                 )
                 .order().asc("shout.begins").findList();
 
+        List<ShoutResult> b = new ArrayList<>();
         for(ShoutMembership m : shouts){
-            b.addShout(m);
+            b.add(ShoutResultFactory.getShoutResult(m));
         }
-        return ok(toJson(b.shouts));
+        return ok(toJson(b));
+
+    }
+
+    @Security.Authenticated(AuthenticateCookie.class)
+    public static Result get(Long memberId){
+
+        User user = (User) Http.Context.current().args.get("userObject");
+
+        ShoutMembership shout = ShoutMembership.find.byId(memberId);
+
+        if(!shout.getUser().equals(user)){
+            return badRequest();
+        }
+
+        return ok(toJson(ShoutResultFactory.getShoutResult(shout)));
 
     }
 
@@ -115,84 +133,24 @@ public class ShoutController extends Controller{
 
         ObjectNode result = Json.newObject();
 
-        if(shoutRequest.title.equals("")){
-            result.put("success", false);
-            result.put("message", "Title can not be empty");
-            return badRequest(result);
-        }
+        try{
+            Shout shout = ShoutFactory.getShout(user, shoutRequest);
+            NotificationService service = new AWSNotificationService();
+            for(ShoutMembership member: shout.getMembers()){
+                Notification notification = new AWSNotification()
+                        .setEndpoints(member.getUser().getDevices())
+                        .setMessage(user.getFirstName() + " " + user.getLastName() + " has invited you to " + shout.getTitle())
+                        .setBadge(BroUtil.getPendingFriendships(member.getUser()) + BroUtil.getPendingShouts(member.getUser()));
 
-        Shout newShout = new Shout();
-
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-
-        try {
-            Date date = formatter.parse(shoutRequest.begins);
-            if(date.before(DateUtils.addHours(new Date(), -2))){
-                throw new Exception("Date is too far in the past");
+                service.addNotification(notification);
             }
-            newShout.setBegins(date);
+            service.publish();
         }
-        catch (Exception e) {
+        catch (Exception e){
             result.put("success", false);
-            result.put("message", "Invalid date");
+            result.put("message", e.getMessage());
             return badRequest(result);
         }
-
-        newShout.setTitle(shoutRequest.title.trim());
-
-        if (shoutRequest.location.name == null){
-            shoutRequest.location.name = "";
-        }
-        else{
-            shoutRequest.location.name = shoutRequest.location.name.trim();
-        }
-
-        newShout.setLocation(shoutRequest.location);
-        newShout.save();
-
-        ShoutMembership member = new ShoutMembership();
-        member.setUser(user);
-        member.setShout(newShout);
-        newShout.getMembers().add(member);
-        member.setRole(ShoutMembership.Role.CREATOR);
-        member.setStatus(ShoutMembership.Status.ACCEPTED);
-        user.getBeckons().add(member);
-        member.save();
-
-        NotificationService service = new AWSNotificationService();
-
-        for(Friendship friend : shoutRequest.members) {
-            friend.refresh();
-            Logger.debug(friend.getNickname());
-            Logger.debug(friend.getFriend().getEmail());
-            member = new ShoutMembership();
-            member.setUser(friend.getFriend());
-            member.setShout(newShout);
-            newShout.getMembers().add(member);
-            member.setRole(ShoutMembership.Role.MEMBER);
-            member.setStatus(ShoutMembership.Status.INVITED);
-            friend.getOwner().getBeckons().add(member);
-            member.save();
-
-            Notification notification = new AWSNotification()
-                    .setEndpoints(member.getUser().getDevices())
-                    .setMessage(user.getFirstName() + " " + user.getLastName() + " has invited you to " + newShout.getTitle())
-                    .setBadge(BroUtil.getPendingFriendships(member.getUser()) + BroUtil.getPendingShouts(member.getUser()));
-
-            
-            service.addNotification(notification);
-
-        }
-
-        service.publish();
-
-        newShout.save();
-
-        return ok();
-
-    }
-
-    public static Result getMembers(int shoutId){
 
 
 
