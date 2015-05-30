@@ -56,7 +56,7 @@ public class ShoutController extends Controller{
             if(s.status != ShoutMembership.Status.DELETED){
                 canDelete = false;
             }
-            if(s.getUser().equals(user) || member.status.equals(ShoutMembership.Status.DELETED)){
+            if(s.getUser().equals(user) || s.status.equals(ShoutMembership.Status.DELETED)){
                 continue;
             }
             Notification notification = new AWSNotification()
@@ -110,11 +110,11 @@ public class ShoutController extends Controller{
     }
 
     @Security.Authenticated(AuthenticateCookie.class)
-    public static Result get(Long memberId){
+    public static Result get(Long shoutId){
 
         User user = (User) Http.Context.current().args.get("userObject");
 
-        ShoutMembership shout = ShoutMembership.find.byId(memberId);
+        ShoutMembership shout = ShoutMembership.find.byId(shoutId);
 
         if(!shout.getUser().equals(user)){
             return badRequest();
@@ -137,6 +137,9 @@ public class ShoutController extends Controller{
             Shout shout = ShoutFactory.getShout(user, shoutRequest);
             NotificationService service = new AWSNotificationService();
             for(ShoutMembership member: shout.getMembers()){
+                if(member.getUser().equals(user)){
+                    continue;
+                }
                 Notification notification = new AWSNotification()
                         .setEndpoints(member.getUser().getDevices())
                         .setMessage(user.getFirstName() + " " + user.getLastName() + " has invited you to " + shout.getTitle())
