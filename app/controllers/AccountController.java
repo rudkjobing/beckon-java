@@ -247,4 +247,19 @@ public class AccountController extends Controller{
 
     }
 
+    @Security.Authenticated(AuthenticateCookie.class)
+    public static Result signOut(){
+        User user = (User) Http.Context.current().args.get("userObject");
+
+        List<Session> sessions = Session.find.where(
+                Expr.eq("user", user)
+        ).findList();
+
+        for(Session s : sessions){
+           s.delete();
+        }
+
+        return ok();
+    }
+
 }

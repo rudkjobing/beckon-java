@@ -9,6 +9,7 @@ POST        /account/device/register         controllers.AccountController.regis
 POST        /account/check         controllers.AccountController.check()
 GET         /badge                 controllers.AccountController.getBadge()
 POST        /account/requestPin    controllers.AccountController.requestPin()
+DELETE      /account/sessions      controllers.AccountController.signOut()
 
 # Shout routes
 GET         /shouts                controllers.ShoutController.getAll()
