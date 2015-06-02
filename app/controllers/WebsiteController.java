@@ -40,14 +40,17 @@ public class WebsiteController extends Controller{
         request.setPosted(new Date());
         request.setHandled(false);
 
+        String userName = "";
+
         User user = User.find.where(Expr.eq("email", email)).findUnique();
         if(user != null){
             request.setUser(user);
+            userName = " " + user.getFirstName();
         }
 
         request.save();
 
-        text = "Thanks for your message, we will email you asap :-)";
+        text = "Thanks" + userName + " for your message, we will email you asap :-)";
         email = "";
         message = "";
         return ok(views.html.web.index.render(text, errorText, email, message, "disabled"));
