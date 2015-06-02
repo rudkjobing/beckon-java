@@ -50,7 +50,7 @@ public class WebsiteController extends Controller{
         User user = User.find.where(Expr.eq("email", email)).findUnique();
         if(user != null){
             request.setUser(user);
-            userName = " " + user.getFirstName();
+            userName = "Dear " + user.getFirstName() + ". ";
         }
 
         request.save();
@@ -68,7 +68,7 @@ public class WebsiteController extends Controller{
         AWSMailService service = new AWSMailService();
         service.sendMail(mail);
 
-        text = "Thanks" + userName + " for your message, we will email you asap :-)";
+        text = userName + "Thanks for your message, we will email you asap :-)";
         email = "";
         message = "";
         return ok(views.html.web.index.render(text, errorText, email, message, "disabled"));
