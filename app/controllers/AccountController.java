@@ -156,7 +156,7 @@ public class AccountController extends Controller{
             newUser.setHash(Password.getSaltedHash(pinCode));
             newUser.setStatus(User.Status.INACTIVE);
 
-            Session emailSession = new Session(newUser);
+            AWSMailService service = new AWSMailService();
 
             Mail welcomeMail = new AWSMail();
             List<String> to = new ArrayList<>();
@@ -167,11 +167,19 @@ public class AccountController extends Controller{
             welcomeMail.setHtmlBody(views.html.mail.welcome_html.render(newUser.getFirstName(), pinCode).body());
             welcomeMail.setTextBody(views.html.mail.welcome_text.render(newUser.getFirstName(), pinCode).body());
 
-            AWSMailService service = new AWSMailService();
+            newUser.save();
             service.sendMail(welcomeMail);
 
-            newUser.save();
-            emailSession.save();
+            Mail adminMail = new AWSMail();
+            to = new ArrayList<>();
+            to.add("steffen@broshout.net");
+            adminMail.setFrom("AccountBot@broshout.net");
+            adminMail.setTo(to);
+            adminMail.setSubject(newUser.getEmail() + " Signed up!!");
+            adminMail.setHtmlBody("Champagne!");
+            adminMail.setTextBody("Champagne!");
+
+            service.sendMail(adminMail);
 
             result.put("success", true);
             result.put("message", "Please check your email.");
