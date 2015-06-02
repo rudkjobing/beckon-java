@@ -87,7 +87,7 @@ create table shout_membership (
 create table support_request (
   id                        bigint not null,
   email                     varchar(255),
-  message                   varchar(255),
+  message                   text,
   handled                   boolean,
   posted                    timestamp,
   user_id                   bigint,
