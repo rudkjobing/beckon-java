@@ -6,8 +6,13 @@ import models.User;
 import org.apache.commons.validator.routines.EmailValidator;
 import play.mvc.Controller;
 import play.mvc.Result;
+import support.mail.AWSMail;
+import support.mail.AWSMailService;
+import support.mail.Mail;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static play.data.Form.form;
 
@@ -49,6 +54,19 @@ public class WebsiteController extends Controller{
         }
 
         request.save();
+
+        Mail mail = new AWSMail();
+
+        List<String> to = new ArrayList<>();
+        to.add("steffen@broshout.net");
+        mail.setFrom("SupportBot@broshout.net");
+        mail.setTo(to);
+        mail.setSubject(email);
+        mail.setHtmlBody(message);
+        mail.setTextBody(message);
+
+        AWSMailService service = new AWSMailService();
+        service.sendMail(mail);
 
         text = "Thanks" + userName + " for your message, we will email you asap :-)";
         email = "";
