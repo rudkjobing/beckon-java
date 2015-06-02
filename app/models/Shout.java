@@ -26,6 +26,8 @@ public class Shout extends Model{
     public Date begins;
     @OneToOne(cascade=CascadeType.ALL,fetch = FetchType.EAGER)
     public Location location;
+    @OneToOne(cascade=CascadeType.ALL,fetch = FetchType.EAGER)
+    private ChatRoom chatRoom;
 
     public Location getLocation() {
         return location;
@@ -57,6 +59,14 @@ public class Shout extends Model{
 
     public void setBegins(Date begins) {
         this.begins = begins;
+    }
+
+    public ChatRoom getChatRoom() {
+        return chatRoom;
+    }
+
+    public void setChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
     }
 
     public static Finder<Long,Shout> find = new Finder<Long,Shout>(

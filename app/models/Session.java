@@ -20,6 +20,7 @@ public class Session extends Model{
 
     @Id
     public Long id;
+
     @Column(unique=true,length = 191)
     public String uuid;
     @ManyToOne

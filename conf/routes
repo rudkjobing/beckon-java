@@ -17,9 +17,6 @@ POST        /shout                 controllers.ShoutController.add()
 POST        /shout/membership/status    controllers.ShoutController.updateMemberStatus()
 GET         /shout/:id             controllers.ShoutController.get(id: Long)
 
-# User routes
-GET         /                      controllers.UserController.online()
-
 # Friendship routes
 GET         /friendships           controllers.FriendshipController.getList(status ?= null)
 PUT         /friend                controllers.FriendshipController.add()
@@ -31,6 +28,9 @@ POST        /friend/search         controllers.FriendshipController.search()
 GET         /test/mail             controllers.TestController.mail()
 GET         /test/test             controllers.TestController.test()
 
+# Website
+GET         /                      controllers.WebsiteController.index()
+POST         /                     controllers.WebsiteController.index()
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file          controllers.Assets.at(path="/public", file)
