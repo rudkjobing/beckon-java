@@ -200,17 +200,27 @@ public class AccountController extends Controller{
         DeviceRegisterRequest request = fromJson(request().body().asJson(), DeviceRegisterRequest.class);
         User user = (User) Http.Context.current().args.get("userObject");
 
-        Device device = Device.find.where()
+        List<Device> devices = Device.find.where()
                 .and(
-                        Expr.and(
-                                Expr.eq("uuid", request.uuid),
-                                Expr.eq("type", request.type)
-                        ),
-                        Expr.eq("owner", user)
-                ).findUnique();
+                        Expr.eq("uuid", request.uuid),
+                        Expr.eq("type", request.type)
+                ).findList();
 
-        if(device == null){
-            device = new Device();
+        if(devices.size() > 0){
+            for(Device d: devices){
+                if(d.getOwner().equals(user)){
+                    d.setLastRegistered(new Date());
+                    d.save();
+                }
+                else{
+                    devices.remove(d);
+                    d.delete();
+                }
+            }
+        }
+
+        if(devices.size() == 0){
+            Device device = new Device();
             device.setOwner(user);
             device.setType(request.type);
             device.setUuid(request.uuid);
@@ -222,15 +232,9 @@ public class AccountController extends Controller{
 
             device.setArn(arn);
             device.save();
-
-            return ok(toJson(device));
-        }
-        else{
-            device.setLastRegistered(new Date());
-            device.save();
         }
 
-        return ok(toJson(device));
+        return ok();
 
     }
 
@@ -265,6 +269,14 @@ public class AccountController extends Controller{
 
         for(Session s : sessions){
            s.delete();
+        }
+
+        List<Device> devices = Device.find.where(
+                    Expr.eq("owner", user)
+                ).findList();
+
+        for(Device d: devices){
+            d.delete();
         }
 
         return ok();
