@@ -149,8 +149,10 @@ public class FriendshipController extends Controller {
         return ok();
     }
 
+    @Security.Authenticated(AuthenticateCookie.class)
     public static Result decline(){
         User user = (User) Http.Context.current().args.get("userObject");
+
         FriendshipTransition friendshipTransition = fromJson(request().body().asJson(), FriendshipTransition.class);
 
         Friendship friendship = Friendship.find.byId(friendshipTransition.id);
