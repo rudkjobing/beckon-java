@@ -2,8 +2,6 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
 import org.apache.commons.validator.routines.EmailValidator;
 import play.db.ebean.Model;
 
@@ -27,24 +25,35 @@ public class User extends Model {
 
     @Id
     public Long id;
+
     private String firstName;
+
     private String lastName;
+
     private String region = "DK";
-//    @Column(unique=true)
-//    private String phoneNumber;
+
     @Column(unique=true,length = 191)
     private String email;
+
     @OneToMany(mappedBy = "owner",cascade=CascadeType.ALL)
     @JsonIgnore
     private List<Friendship> friendships = new ArrayList<Friendship>();
+
     @OneToMany(cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<ShoutMembership> beckons = new ArrayList<ShoutMembership>();
+    private List<ShoutMembership> shouts = new ArrayList<ShoutMembership>();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<ChatRoomMember> chatrooms = new ArrayList<ChatRoomMember>();
+
     @OneToMany(mappedBy = "owner", cascade=CascadeType.ALL)
     @JsonIgnore
     private List<Device> devices = new ArrayList<Device>();
+
     @JsonIgnore
     private String hash;
+
     @JsonIgnore
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -141,12 +150,20 @@ public class User extends Model {
         this.devices = devices;
     }
 
-    public List<ShoutMembership> getBeckons() {
-        return beckons;
+    public List<ShoutMembership> getShouts() {
+        return shouts;
     }
 
-    public void setBeckons(List<ShoutMembership> beckons) {
-        this.beckons = beckons;
+    public void setShouts(List<ShoutMembership> shouts) {
+        this.shouts = shouts;
+    }
+
+    public List<ChatRoomMember> getChatrooms() {
+        return chatrooms;
+    }
+
+    public void setChatrooms(List<ChatRoomMember> chatrooms) {
+        this.chatrooms = chatrooms;
     }
 
     /**

@@ -1,5 +1,7 @@
 package models;
 
+import play.db.ebean.Model;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,7 +13,7 @@ import java.util.List;
  * Created by Play on 5/25/2015.
  */
 @Entity
-public class ChatRoom {
+public class ChatRoom extends Model{
 
     @Id
     private Long id;
@@ -39,4 +41,8 @@ public class ChatRoom {
     public void setMembers(List<ChatRoomMember> members) {
         this.members = members;
     }
+
+    public static Model.Finder<Long,ChatRoom> find = new Model.Finder<Long,ChatRoom>(
+            Long.class, ChatRoom.class
+    );
 }

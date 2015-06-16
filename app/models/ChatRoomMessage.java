@@ -1,5 +1,7 @@
 package models;
 
+import play.db.ebean.Model;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -7,7 +9,7 @@ import java.util.Date;
  * Created by Play on 5/25/2015.
  */
 @Entity
-public class ChatRoomMessage {
+public class ChatRoomMessage extends Model {
 
     @Id
     private Long id;

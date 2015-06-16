@@ -1,6 +1,6 @@
 package controllers;
 
-import classes.ShoutAddRequest;
+import classes.ShoutCreateRequest;
 import classes.ShoutResult;
 import classes.ShoutResultFactory;
 import classes.ShoutMemberTransition;
@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import factories.ShoutFactory;
 import models.*;
 import org.apache.commons.lang3.time.DateUtils;
-import play.Logger;
 import play.libs.Json;
 import play.mvc.*;
 import support.misc.BroUtil;
@@ -20,7 +19,6 @@ import support.notification.Notification;
 import support.notification.NotificationService;
 import support.security.AuthenticateCookie;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -128,12 +126,13 @@ public class ShoutController extends Controller{
     @Security.Authenticated(AuthenticateCookie.class)
     public static Result add(){
 
-        ShoutAddRequest shoutRequest = fromJson(request().body().asJson(), ShoutAddRequest.class);
+        ShoutCreateRequest shoutRequest = fromJson(request().body().asJson(), ShoutCreateRequest.class);
         User user = (User) Http.Context.current().args.get("userObject");
 
         ObjectNode result = Json.newObject();
 
         try{
+
             Shout shout = ShoutFactory.getShout(user, shoutRequest);
             NotificationService service = new AWSNotificationService();
             for(ShoutMembership member: shout.getMembers()){
@@ -154,8 +153,6 @@ public class ShoutController extends Controller{
             result.put("message", e.getMessage());
             return badRequest(result);
         }
-
-
 
         return ok();
 

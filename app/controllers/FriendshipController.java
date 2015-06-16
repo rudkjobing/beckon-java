@@ -1,6 +1,6 @@
 package controllers;
 
-import classes.FriendshipAddRequest;
+import classes.FriendshipCreateRequest;
 import classes.FriendshipTransition;
 import classes.SearchQuery;
 import com.avaje.ebean.Expr;
@@ -17,7 +17,6 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Security;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static play.libs.Json.fromJson;
@@ -32,9 +31,9 @@ public class FriendshipController extends Controller {
     @Security.Authenticated(AuthenticateCookie.class)
     public static Result add(){
 
-        FriendshipAddRequest friendshipAddRequest = fromJson(request().body().asJson(), FriendshipAddRequest.class);
+        FriendshipCreateRequest friendshipCreateRequest = fromJson(request().body().asJson(), FriendshipCreateRequest.class);
         User me = (User) Http.Context.current().args.get("userObject");
-        User them = User.find.byId(friendshipAddRequest.getUserId());
+        User them = User.find.byId(friendshipCreateRequest.getUserId());
 
         //Find out if we are already friends
         for(Friendship friendship: me.getFriendships()){

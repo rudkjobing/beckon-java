@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by Play on 11-04-2015.
  */
-public class ShoutAddRequest {
+public class ShoutCreateRequest {
 
     public String title;
     public String begins;

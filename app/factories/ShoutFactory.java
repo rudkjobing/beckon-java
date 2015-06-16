@@ -1,6 +1,6 @@
 package factories;
 
-import classes.ShoutAddRequest;
+import classes.ShoutCreateRequest;
 import models.Friendship;
 import models.Shout;
 import models.ShoutMembership;
@@ -16,7 +16,7 @@ import java.util.Date;
  */
 public class ShoutFactory {
 
-    public static Shout getShout(User user, ShoutAddRequest request) throws Exception{
+    public static Shout getShout(User user, ShoutCreateRequest request) throws Exception{
 
         if(request.title.equals("")){
             throw new Exception("Title can not be empty");
@@ -50,7 +50,7 @@ public class ShoutFactory {
         shout.getMembers().add(member);
         member.setRole(ShoutMembership.Role.CREATOR);
         member.setStatus(ShoutMembership.Status.ACCEPTED);
-        user.getBeckons().add(member);
+        user.getShouts().add(member);
         member.save();
 
         for(Friendship friend : request.members) {
@@ -63,9 +63,11 @@ public class ShoutFactory {
             shout.getMembers().add(member);
             member.setRole(ShoutMembership.Role.MEMBER);
             member.setStatus(ShoutMembership.Status.INVITED);
-            friend.getOwner().getBeckons().add(member);
+            friend.getOwner().getShouts().add(member);
             member.save();
         }
+
+        shout.setChatRoom(ChatRoomFactory.getChatRoom(user, request.members));
 
         shout.save();
 
