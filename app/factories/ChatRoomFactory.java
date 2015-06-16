@@ -22,7 +22,7 @@ public class ChatRoomFactory{
 
         ChatRoomMember member = new ChatRoomMember();
         member.setUser(user);
-        chatRoom.getMembers().add(member);
+        member.setChatRoom(chatRoom);
         member.save();
 
         for(Friendship friend : friendships) {
