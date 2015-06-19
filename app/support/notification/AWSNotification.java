@@ -15,7 +15,7 @@ public class AWSNotification implements Notification {
 
     private List<Device> endpoints = new ArrayList<Device>();
     private String message = "";
-    private int badge = 0;
+    private int badge = -1;
     private String sound ="default";
 
     @Override
@@ -69,7 +69,9 @@ public class AWSNotification implements Notification {
         ObjectNode aps = Json.newObject();
 
         aps.put("alert", this.getMessage());
-        aps.put("badge", this.getBadge());
+        if(this.badge != -1) {
+            aps.put("badge", this.getBadge());
+        }
         aps.put("sound", this.getSound());
 
         apns.put("aps", aps);

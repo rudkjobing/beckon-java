@@ -24,6 +24,11 @@ POST        /friend/accept         controllers.FriendshipController.accept()
 POST        /friend/decline        controllers.FriendshipController.decline()
 POST        /friend/search         controllers.FriendshipController.search()
 
+# Chat routes
+GET         /chatroom/:id          controllers.ChatRoomController.getChatRoomMessages(id: Long)
+POST        /chatroom/:id          controllers.ChatRoomController.sendChatRoomMessage(id: Long)
+POST        /chatroom              controllers.ChatRoomController.createChatRoom()
+
 # Test
 GET         /test/mail             controllers.TestController.mail()
 GET         /test/test             controllers.TestController.test()

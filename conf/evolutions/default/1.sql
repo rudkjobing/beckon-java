@@ -12,6 +12,7 @@ create table chat_room_member (
   id                        bigint not null,
   user_id                   bigint,
   chat_room_id              bigint,
+  unread_messages           integer,
   constraint pk_chat_room_member primary key (id))
 ;
 
