@@ -79,6 +79,7 @@ public class ChatRoomController extends Controller {
         message.setChatRoom(chatRoom);
         message.setMessage(chatRoomSendMessageRequest.message);
         message.setPosted(new Date());
+        message.setPoster(chatRoomMember);
         message.save();
 
         NotificationService service = new AWSNotificationService();

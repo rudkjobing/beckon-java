@@ -22,8 +22,19 @@ public class ChatRoomMessage extends Model {
     public Date posted;
 
     @ManyToOne
+    public ChatRoomMember poster;
+
+    @ManyToOne
     @JsonIgnore
     private ChatRoom chatRoom;
+
+    public ChatRoomMember getPoster() {
+        return poster;
+    }
+
+    public void setPoster(ChatRoomMember poster) {
+        this.poster = poster;
+    }
 
     public String getMessage() {
         return message;

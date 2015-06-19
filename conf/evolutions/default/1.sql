@@ -20,6 +20,7 @@ create table chat_room_message (
   id                        bigint not null,
   message                   varchar(255),
   posted                    timestamp,
+  poster_id                 bigint,
   chat_room_id              bigint,
   constraint pk_chat_room_message primary key (id))
 ;
@@ -134,28 +135,30 @@ alter table chat_room_member add constraint fk_chat_room_member_user_1 foreign k
 create index ix_chat_room_member_user_1 on chat_room_member (user_id);
 alter table chat_room_member add constraint fk_chat_room_member_chatRoom_2 foreign key (chat_room_id) references chat_room (id);
 create index ix_chat_room_member_chatRoom_2 on chat_room_member (chat_room_id);
-alter table chat_room_message add constraint fk_chat_room_message_chatRoom_3 foreign key (chat_room_id) references chat_room (id);
-create index ix_chat_room_message_chatRoom_3 on chat_room_message (chat_room_id);
-alter table device add constraint fk_device_owner_4 foreign key (owner_id) references bro (id);
-create index ix_device_owner_4 on device (owner_id);
-alter table friendship add constraint fk_friendship_owner_5 foreign key (owner_id) references bro (id);
-create index ix_friendship_owner_5 on friendship (owner_id);
-alter table friendship add constraint fk_friendship_friend_6 foreign key (friend_id) references bro (id);
-create index ix_friendship_friend_6 on friendship (friend_id);
-alter table friendship add constraint fk_friendship_peer_7 foreign key (peer_id) references friendship (id);
-create index ix_friendship_peer_7 on friendship (peer_id);
-alter table session add constraint fk_session_user_8 foreign key (user_id) references bro (id);
-create index ix_session_user_8 on session (user_id);
-alter table shout add constraint fk_shout_location_9 foreign key (location_id) references location (id);
-create index ix_shout_location_9 on shout (location_id);
-alter table shout add constraint fk_shout_chatRoom_10 foreign key (chat_room_id) references chat_room (id);
-create index ix_shout_chatRoom_10 on shout (chat_room_id);
-alter table shout_membership add constraint fk_shout_membership_shout_11 foreign key (shout_id) references shout (id);
-create index ix_shout_membership_shout_11 on shout_membership (shout_id);
-alter table shout_membership add constraint fk_shout_membership_user_12 foreign key (user_id) references bro (id);
-create index ix_shout_membership_user_12 on shout_membership (user_id);
-alter table support_request add constraint fk_support_request_user_13 foreign key (user_id) references bro (id);
-create index ix_support_request_user_13 on support_request (user_id);
+alter table chat_room_message add constraint fk_chat_room_message_poster_3 foreign key (poster_id) references chat_room_member (id);
+create index ix_chat_room_message_poster_3 on chat_room_message (poster_id);
+alter table chat_room_message add constraint fk_chat_room_message_chatRoom_4 foreign key (chat_room_id) references chat_room (id);
+create index ix_chat_room_message_chatRoom_4 on chat_room_message (chat_room_id);
+alter table device add constraint fk_device_owner_5 foreign key (owner_id) references bro (id);
+create index ix_device_owner_5 on device (owner_id);
+alter table friendship add constraint fk_friendship_owner_6 foreign key (owner_id) references bro (id);
+create index ix_friendship_owner_6 on friendship (owner_id);
+alter table friendship add constraint fk_friendship_friend_7 foreign key (friend_id) references bro (id);
+create index ix_friendship_friend_7 on friendship (friend_id);
+alter table friendship add constraint fk_friendship_peer_8 foreign key (peer_id) references friendship (id);
+create index ix_friendship_peer_8 on friendship (peer_id);
+alter table session add constraint fk_session_user_9 foreign key (user_id) references bro (id);
+create index ix_session_user_9 on session (user_id);
+alter table shout add constraint fk_shout_location_10 foreign key (location_id) references location (id);
+create index ix_shout_location_10 on shout (location_id);
+alter table shout add constraint fk_shout_chatRoom_11 foreign key (chat_room_id) references chat_room (id);
+create index ix_shout_chatRoom_11 on shout (chat_room_id);
+alter table shout_membership add constraint fk_shout_membership_shout_12 foreign key (shout_id) references shout (id);
+create index ix_shout_membership_shout_12 on shout_membership (shout_id);
+alter table shout_membership add constraint fk_shout_membership_user_13 foreign key (user_id) references bro (id);
+create index ix_shout_membership_user_13 on shout_membership (user_id);
+alter table support_request add constraint fk_support_request_user_14 foreign key (user_id) references bro (id);
+create index ix_support_request_user_14 on support_request (user_id);
 
 
 
