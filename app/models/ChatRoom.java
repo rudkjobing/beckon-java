@@ -19,6 +19,7 @@ public class ChatRoom extends Model{
     @Id
     private Long id;
 
+    @JsonIgnore
     @OneToMany
     private List<ChatRoomMessage> messages = new ArrayList<>();
 

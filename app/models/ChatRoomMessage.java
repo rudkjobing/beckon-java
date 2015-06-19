@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import play.db.ebean.Model;
 
 import javax.persistence.*;
@@ -12,11 +13,16 @@ import java.util.Date;
 public class ChatRoomMessage extends Model {
 
     @Id
+    @JsonIgnore
     private Long id;
+
     private String message;
+
     @Temporal(TemporalType.TIMESTAMP)
     public Date posted;
+
     @ManyToOne
+    @JsonIgnore
     private ChatRoom chatRoom;
 
     public String getMessage() {
