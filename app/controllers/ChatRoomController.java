@@ -61,7 +61,18 @@ public class ChatRoomController extends Controller {
         ChatRoomSendMessageRequest chatRoomSendMessageRequest = fromJson(request().body().asJson(), ChatRoomSendMessageRequest.class);
         User user = (User) Http.Context.current().args.get("userObject");
 
-        ChatRoom chatRoom = chatRoomSendMessageRequest.chatRoom;
+        ChatRoomMember chatRoomMember = ChatRoomMember.find.where()
+                .and(
+                        Expr.eq("user", user),
+                        Expr.eq("id", id)
+                ).findUnique();
+
+        if(chatRoomMember == null){
+            return badRequest("Chatroom not found");
+        }
+
+        ChatRoom chatRoom = chatRoomMember.getChatRoom();
+
         chatRoom.refresh();
 
         ChatRoomMessage message = new ChatRoomMessage();

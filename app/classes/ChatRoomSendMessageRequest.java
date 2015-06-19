@@ -7,7 +7,6 @@ import models.ChatRoom;
  */
 public class ChatRoomSendMessageRequest {
 
-    public ChatRoom chatRoom;
     public String message;
 
 }
