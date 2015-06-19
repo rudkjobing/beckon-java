@@ -1,5 +1,7 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import play.db.ebean.Model;
 
 import javax.persistence.Entity;
@@ -13,11 +15,13 @@ import javax.persistence.ManyToOne;
 public class ChatRoomMember extends Model{
 
     @Id
+    @JsonIgnore
     private Long id;
 
     @ManyToOne
     private User user;
 
+    @JsonIgnore
     @ManyToOne
     private ChatRoom chatRoom;
 

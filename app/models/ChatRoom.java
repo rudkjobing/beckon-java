@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import play.db.ebean.Model;
 
 import javax.persistence.CascadeType;
@@ -17,8 +18,11 @@ public class ChatRoom extends Model{
 
     @Id
     private Long id;
+
     @OneToMany
     private List<ChatRoomMessage> messages = new ArrayList<>();
+
+    @JsonIgnore
     @OneToMany
     private List<ChatRoomMember> members = new ArrayList<>();
 

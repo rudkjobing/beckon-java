@@ -24,6 +24,7 @@ public class ShoutResultFactory {
         result.location = membership.getShout().getLocation();
         result.begins = membership.getShout().getBegins();
         result.title = membership.getShout().getTitle();
+        result.chatRoom = membership.getShout().getChatRoom();
 
         result.createMembers(membership.getShout());
 

@@ -1,5 +1,6 @@
 package classes;
 
+import models.ChatRoom;
 import models.Location;
 import models.Shout;
 import models.ShoutMembership;
@@ -21,6 +22,7 @@ public class ShoutResult {
     public Location location;
     public Date begins;
     public List<Member> memberList = new ArrayList<>();
+    public ChatRoom chatRoom;
 
     public void createMembers(Shout shout){
         for(ShoutMembership otherMember : shout.getMembers()){
