@@ -117,7 +117,7 @@ public class ChatRoomController extends Controller {
             return badRequest("Chatroom not found");
         }
 
-        return ok(toJson(chatRoom.getChatRoom().getMessages()));
+        return ok(toJson(chatRoom.getChatRoom().getMessages().toArray()));
     }
 
 }
